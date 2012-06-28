@@ -1,4 +1,4 @@
-# Inqury 
+# Inqury [![Build Status](https://secure.travis-ci.org/bigeasy/inquiry.png?branch=master)](http://travis-ci.org/bigeasy/inquiry)
 
 A micro-JavaScript JSON path language for Node.js and the browser.
 
