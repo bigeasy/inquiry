@@ -3,7 +3,7 @@
 set -e
 
 if [ "$TRAVIS" = "true" ]; then
-  sudo apt-get install -q -q bc 2> /dev/null > /dev/null && echo 'Installed `bc`.'
+  sudo apt-get install -q -q bc 2> /dev/null > /dev/null && echo 'Installed `bc`.' && echo ''
 fi
 
 utility/sizes index.js
