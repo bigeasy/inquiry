@@ -1,0 +1,5 @@
+1340896574143 run  t/search/minimal.t
+1340896574188 plan t/search/minimal.t 1
+1340896574189 test t/search/minimal.t ok 1 select by name
+1340896574192 exit t/search/minimal.t 0
+1340896574192 eof  *
