@@ -3,7 +3,7 @@
 set -e
 
 if [ "$TRAVIS" = "true" ]; then
-  sudo apt-get install bc
+  sudo apt-get install -q -q bc
 fi
 
 utility/sizes index.js
