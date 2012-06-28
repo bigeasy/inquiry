@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 if [ "$TRAVIS" = "true" ]; then
   sudo apt-get install -q -q bc 2> /dev/null > /dev/null && echo 'Installed `bc`.' && echo ''
 fi
@@ -22,10 +24,5 @@ if [ "$TRAVIS" = "true" ] || [ "$MINIFY" = "true" ]; then
     cat $bak | uglifyjs --lift-vars > index.js
   fi 
  
-  (proof run t/*/*.t | tee .proof.out | proof progress) || (cat .proof.out && (proof errors < .proof.out)) || exit 1
-
-  echo cat .proof.out
-  cat .proof.out
-  echo cat .proof.out
-
+  (proof run t/*/*.t | tee .proof.out | proof progress) || (proof errors < .proof.out) || exit 1
 fi
