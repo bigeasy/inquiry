@@ -2,7 +2,7 @@
 
 A micro-JavaScript JSON path language for Node.js and the browser.
 
-```
+```javascript
 var $q = require("inqury"), hickory, object =
   { presidents:
   [ { firstName: "George", lastName:"Washington" }
