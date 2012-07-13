@@ -3,10 +3,10 @@
 set -e
 
 if [ "$TRAVIS" = "true" ]; then
-  sudo apt-get install -q -q bc 2> /dev/null > /dev/null && echo 'Installed `bc`.' && echo ''
+  sudo apt-get install -q -q bc 2> /dev/null > /dev/null && echo '$ sudo apt-get install bc' && echo ''
 fi
 
-utility/sizes index.js
+t/sizes index.js
 
 echo ""
 
@@ -26,3 +26,5 @@ if [ "$TRAVIS" = "true" ] || [ "$MINIFY" = "true" ]; then
  
   (proof run t/*/*.t | tee .proof.out | proof progress) || (proof errors < .proof.out) || exit 1
 fi
+
+echo ""

@@ -9,8 +9,8 @@
 ,   "author" :          "Alan Gutierrez <alan@prettyrobots.com> (http://twitter.com/bigeasy)"
 ,   "contributors" :    []
 ,   "dependencies" :    {}
-,   "devDependencies":  { "proof": "0.0.7", "uglify-js": "~1.3" }
+,   "devDependencies":  { "proof": "0.0.15", "uglify-js": "~1.3" }
 ,   "lib" :             "lib"
-,   "scripts" :         { "test": "utility/test" }
+,   "scripts" :         { "test": "t/test" }
 ,   "engines" :         { "node": "> 0.4.0" }
 }
