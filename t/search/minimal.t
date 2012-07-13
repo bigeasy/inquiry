@@ -3,5 +3,5 @@
 var inquiry = require("../../index");
 require("proof")(1, function (equal) {
   var object = { name: "Alan" };
-  equal(inquiry(object, "/name"), "Alan", "select by name");
+  equal(inquiry("/name")(object).pop(), "Alan", "select by name");
 });
