@@ -117,6 +117,21 @@ Or maybe...
 var abe = $('/presidents[$('../' + ($i - 1)).lastName == "Buchanan"]')(presidents).pop();
 ```
 
+Also...
+
+```javascript
+var abe = $('/presidents[$(..[$i == $1], $i - 1).lastName == "Buchanan"]')(presidents).pop();
+```
+
+But, that is a scan, when it can be an index, so...
+
+```javascript
+var abe = $('/presidents[$(../$1, $i - 1).lastName == "Buchanan"]')(presidents).pop();
+```
+
+But, `$1` is very much a valid path identifier. Quote it? Certinaly, JSON path
+will escape the dollar sign.
+
 Latter is simplier and can still take advantage of once a visit.
 
 The above shows some of the goals of the language.
