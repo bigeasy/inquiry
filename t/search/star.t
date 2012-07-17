@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-var inquiry = require("../../index");
+var inquiry = require("../..");
 require("proof")(3, function (equal) {
   var object = { name: "George" };
   equal(inquiry("/n*")(object).pop(), "George", "select by end star");
