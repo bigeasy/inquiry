@@ -150,6 +150,22 @@ a new little language and utility for queries against larger JSON documents.
 
 Changes for each release.
 
-### Version 0.0.0 -  Thu Jun 28 15:16:23 UTC 2012
+### Version 0.0.1
+
+Released: Sun Jul 22 19:47:59 UTC 2012.
+
+ * Path passes through all elements in array. #18.
+ * Select array element by index. #17.
+ * Implement arguments. #11.
+ * Select by wildcard. #10.
+ * Build on Windows. #9.
+ * Build on Travis CI. #5.
+ * Upgrade to Proof 0.0.15. #8. #6.
+ * Convert to a function compiler. #7.
+ * Return an array always. #3. 
+
+### Version 0.0.0
+
+Released: Thu Jun 28 15:16:23 UTC 2012.
 
  * Select property by name. #1.
