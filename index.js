@@ -59,23 +59,30 @@
       return true;
     }
     return function (object) {
-      var vargs = slice.call(arguments, 1), star, name, key, i, I, test, candidates = [], candidate, stack = [];
+      var vargs = slice.call(arguments, 1)
+        , candidates = [], candidate, stack = [ object ]
+        , star, name, key, i, I, test
+        ;
       for (i = 0, I = expression.length; i < I; i++) {
-        $ = expression.shift(), name = $[1], test = $[2];
-        if (name == '.') {
-          candidates.push(object);
-        } else if (~(star = name.indexOf('*'))) {
-          for (key in object) {
-            if (key.indexOf(name.substring(0, star)) == 0
-                && key.lastIndexOf(name.substring(star + 1) == key.length - (name.length - star))) {
-              candidates.push(object[key]);
-              break;
+        name = expression[i][1], test = expression[i][2];
+        while (stack.length) {
+          object = stack.shift();
+          if (name == '.') {
+            candidates.push(object);
+          } else if (~(star = name.indexOf('*'))) {
+            for (key in object) {
+              if (key.indexOf(name.substring(0, star)) == 0
+                  && key.lastIndexOf(name.substring(star + 1) == key.length - (name.length - star))) {
+                candidates.push(object[key]);
+                break;
+              }
             }
+          } else if (object[name]) {
+            candidates.push(object[name]);
+          } else if (Array.isArray(object)) {
+            stack.unshift.apply(stack, object);
           }
-        } else if (object[name]) {
-          candidates.push(object[name]);
         }
-        stack.length = 0;
         while (candidates.length) {
           candidate = candidates.shift();
           if (subexpression(test, candidate, vargs)) {
