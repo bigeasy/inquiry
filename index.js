@@ -13,7 +13,6 @@
   function subsexpression (rest, struct) {
     return rest.substring(1);
   }
-  function truth () { return true }
   function inquiry (query) {
     var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args;
     if (query[0] != '/') {
@@ -48,7 +47,7 @@
         args.push('return ' + source);
         struct.push(Function.apply(Function, args));
       } else {
-        struct.push(truth);
+        struct.push(null);
       }
       expression.push(struct);
     }
@@ -83,11 +82,17 @@
             stack.unshift.apply(stack, object);
           }
         }
-        while (candidates.length) {
-          candidate = candidates.shift();
-          if (subexpression(test, candidate, vargs)) {
-            stack.push(candidate);
+        if (test) {
+          while (candidates.length) {
+            candidate = candidates.shift();
+            if (Array.isArray(candidate)) {
+              candidates.unshift.apply(candidates, candidate);
+            } else if (subexpression(test, candidate, vargs)) {
+              stack.push(candidate);
+            }
           }
+        } else {
+          stack.unshift.apply(stack, candidates.splice(0));
         }
       }
       return stack;
