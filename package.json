@@ -1,5 +1,5 @@
 {   "name":             "inquiry"
-,   "description":      "A JSON path language. (pre-alpha)"
+,   "description":      "A parameterized JSON path language for Node.js and the browser."
 ,   "version":          "0.0.1"
 ,   "homepage":         "http://bigeasy.github.com/inquiry"
 ,   "repository":       "git://github.com/bigeasy/inquiry.git"
