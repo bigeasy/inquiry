@@ -1,5 +1,4 @@
 .AppleDouble
 .DS_Store
-.proof.out
-node_modules
+node_modules/*
 .proof.out

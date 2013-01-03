@@ -1,5 +1,5 @@
 {   "name":             "inquiry"
-,   "description":      "A JSON path language. (pre-alpha)"
+,   "description":      "A parameterized JSON path language for Node.js and the browser."
 ,   "version":          "0.0.1"
 ,   "homepage":         "http://bigeasy.github.com/inquiry"
 ,   "repository":       "git://github.com/bigeasy/inquiry.git"
@@ -11,6 +11,6 @@
 ,   "dependencies" :    {}
 ,   "devDependencies":  { "proof": "0.0.15", "uglify-js": "~1.3" }
 ,   "lib" :             "lib"
-,   "scripts" :         { "test": "proof platform win32 && proof t/*/*.t || t/test" }
+,   "scripts" :         { "test": "proof platform win32 && proof t/*/*.t.js || t/test" }
 ,   "engines" :         { "node": "> 0.4.0" }
 }
