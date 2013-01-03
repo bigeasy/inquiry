@@ -66,7 +66,11 @@
         name = expression[i][1], test = expression[i][2];
         while (stack.length) {
           object = stack.shift();
-          if (name == '.') {
+          if (object[name]) {
+            candidates.push(object[name]);
+          } else if (Array.isArray(object)) {
+            stack.unshift.apply(stack, object);
+          } else if (name == '.') {
             candidates.push(object);
           } else if (~(star = name.indexOf('*'))) {
             for (key in object) {
@@ -76,10 +80,6 @@
                 break;
               }
             }
-          } else if (object[name]) {
-            candidates.push(object[name]);
-          } else if (Array.isArray(object)) {
-            stack.unshift.apply(stack, object);
           }
         }
         if (test) {
