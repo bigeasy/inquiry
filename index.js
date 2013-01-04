@@ -83,7 +83,7 @@
     }
     function subexpression (test, object, vargs) {
       if (true || test.length) {
-        return test.apply(object, [ object ].concat(vargs.slice(0, test.length - 1)));
+        return test.apply(object, [ object ].concat(vargs));
       }
       return true;
     }
