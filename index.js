@@ -21,7 +21,7 @@
   function parse (query, stop) {
     var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args;
     if (query[0] != '/') {
-      if (query[0] != '.') {
+      if (/^[[{]/.test(query[0])) {
         rest = '/.' + query;
         index = -2;
       } else {
