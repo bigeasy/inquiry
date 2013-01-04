@@ -1,4 +1,4 @@
-!function (definition) {
+! function (definition) {
   if (typeof module == "object" && module.exports) module.exports = definition();
   else if (typeof define == "function") define(definition);
   else window.inquiry = definition();
@@ -6,18 +6,10 @@
   var slice = [].slice;
   function die () {
     console.log.apply(console, slice.call(arguments, 0));
-    return process.exit(1);
+    process.exit(1);
   }
-  function say () { return console.log.apply(console, slice.call(arguments, 0)) }
+  function say () { console.log.apply(console, slice.call(arguments, 0)) }
   function error (index) { return "invalid syntax at: " + index }
-  function subsexpression (rest, struct) {
-    return rest.substring(1);
-  }
-  function subquery (test) {
-    return function () {
-      return test.apply(this, arguments).length;
-    }
-  }
   function parse (query, stop) {
     var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args;
     if (query[0] != '/') {
@@ -72,27 +64,25 @@
       // We want to consume the contents of brackets as a sub-expression, so we
       // call ourselves recursively.
       case "[":
-        var sub = parse(rest, "]");
-        struct.push(subquery(sub.shift()));
-        rest = sub.shift().slice(1);
+        $ = parse(rest, "]");
+        struct.push((function (predicate) {
+          return function () {
+            return predicate.apply(this, arguments).length;
+          }
+        })($[0]));
+        rest = $[1].slice(1);
         break;
       default:
         struct.push(null);
       }
       expression.push(struct);
     }
-    function subexpression (test, object, vargs) {
-      if (true || test.length) {
-        return test.apply(object, [ object ].concat(vargs));
-      }
-      return true;
-    }
     return [ function (object) {
       var vargs = slice.call(arguments, 1),
           candidates = [], candidate, stack = [ object ],
-          star, name, key, i, I, test;
+          star, name, key, i, I, predicate;
       for (i = 0, I = expression.length; i < I; i++) {
-        name = expression[i][1], test = expression[i][2];
+        name = expression[i][1], predicate = expression[i][2];
         while (stack.length) {
           object = stack.shift();
           if (object[name]) {
@@ -111,12 +101,12 @@
             }
           }
         }
-        if (test) {
+        if (predicate) {
           while (candidates.length) {
             candidate = candidates.shift();
             if (Array.isArray(candidate)) {
               candidates.unshift.apply(candidates, candidate);
-            } else if (subexpression(test, candidate, vargs)) {
+            } else if (predicate.apply(candidate, [ candidate ].concat(vargs))) {
               stack.push(candidate);
             }
           }
@@ -127,5 +117,5 @@
       return stack;
     }, rest ];
   }
-  return function (query) { return parse(query).shift() }
+  return function (query) { return parse(query)[0] }
 });
