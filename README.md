@@ -30,9 +30,40 @@ hickory = $q('/p*{$.lastName == $1}')(object, "Jackson").pop();
 console.log("Found: " hickory.firstName + " " + hickory.lastName);
 ```
 
+## Paths
+
+Paths are forward slash delimited. The path part begins right after the slash
+and ends at the first unescaped forward slash, open square bracket, open curly
+brace; `/`, `` [ ``, `{`.
+
+```javascript
+var abe = $q('/presidents/16/firstName')(presidents).pop();
+```
+
+This allows you to put most things in your paths, you only need to escape the
+aforementioned terminators, a period `.` if it appears at the start of the path
+part, the asterisk `` * ``, and the percent sign `%` which I'm reserving for a
+JSON pointer implementation.
+
+```javascript
+var object = { "don't you love punctuation?": { "yes!": 1, "no": 0 } };
+var yes = $q("/don't you love punctuation?/yes!")(object).pop();
+```
+
+Escape using a backtick `` ` ``. We use a backtick and not a backslash, because
+then you'd have to double those backslashes up in a JavaScript string, which
+would lead to [leaning toothpick
+syndrome](http://en.wikipedia.org/wiki/Leaning_toothpick_syndrome).
+
+```javascript
+var object = { "forward/slash": { "curly{brace": 1, "square[bracket": 2 } };
+var a = $q('/forward`/slash/curly`{brace')(object).pop();
+```
+
 ## One Wildcard Per Property
 
-In a path, you're allowed one and only one wildcard represented by a star `\*`.
+In a path, you're allowed one and only one wildcard represented by a star
+`` * ``.
 
 Wildcards help to make verbose queries terse.
 
