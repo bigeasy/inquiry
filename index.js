@@ -94,7 +94,7 @@
         name = expression[i][1], predicate = expression[i][2], params = expression[i][3];
         while (stack.length) {
           candidate = stack.shift(), object = candidate.object, path = candidate.path;
-          if (object[name]) {
+          if (object[name] !== (void 0)) {
             candidates.push({ object: object[name], path: Array.isArray(path[0]) ? path : [ object ].concat(path) });
           } else if (Array.isArray(object)) {
             for (j = object.length - 1; j > -1; --j) {
