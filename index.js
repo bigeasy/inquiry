@@ -28,7 +28,7 @@
       // optional predicate or subquery opener.
       $ = /^(\/{1,2})(\.\.|\.|(?:[^[{/`]|`.)*)([{[]?)(.*)/.exec(rest);
       if (!$) throw new Error(error(0));
-      $[2] = $[2].replace(/`(.)/, "$1");
+      $[2] = decodeURIComponent($[2].replace(/`%/g, '%25')).replace(/`(.)/, "$1");
       rest = $[4];
       struct = $.slice(1, 3);
       // Check for have a predicate or a sub-expression.

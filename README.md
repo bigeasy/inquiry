@@ -82,6 +82,22 @@ verbosity, not for pattern matching. There is no good way to pattern match
 against property names in inquiry. You're expected to know the structure of the
 JSON you're querying.
 
+## JSON Pointer
+
+You can also [JSON
+pointer](http://tools.ietf.org/html/draft-pbryan-zyp-json-pointer-02) which is
+simply URL encoded path parts.
+
+```javascript
+var object = { "@#$%^&": { ">": 0, "%3E": 1 } };
+equal($q("%40%23%24%25%5E%26/%3E")(object).pop(), 0, 'encoded');
+equal($q("%40%23%24%25%5E%26/`%3E")(object).pop(), 1, 'escaped encoding');
+```      
+
+I imagine this might be helpful if you want to add paths to URLs, but I've not
+found a use case in the wild. If you do find, one [drop me a
+line](https://github.com/bigeasy/inquiry/issues/12).
+
 ## Predicates
 
 Curly braces indicate predicates. Each step in the path can include a single
