@@ -78,8 +78,7 @@
       // call ourselves recursively.
       case "[":
         $ = parse(rest, "]");
-        struct.push($[0]);
-        struct.push([]);
+        struct.push($[0], []);
         rest = $[1].slice(1);
         break;
       default:
