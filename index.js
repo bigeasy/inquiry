@@ -96,12 +96,12 @@
           candidate = stack.shift(), object = candidate.object, path = candidate.path;
           if (object[name] !== (void 0)) {
             candidates.push({ object: object[name], path: Array.isArray(path[0]) ? path : [ object ].concat(path) });
+          } else if (name == '.') {
+            candidates.push(candidate);
           } else if (Array.isArray(object)) {
             for (j = object.length - 1; j > -1; --j) {
               stack.unshift({ object: object[j], path: [ object ].concat(path) });
             }
-          } else if (name == '.') {
-            candidates.push(candidate);
           } else if (name == '..') {
             var subpath = path.slice();
             candidates.unshift({ object: subpath.shift(), path: subpath, i: 0 });
