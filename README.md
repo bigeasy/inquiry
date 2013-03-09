@@ -60,6 +60,14 @@ var object = { "forward/slash": { "curly{brace": 1, "square[bracket": 2 } };
 var a = $q('/forward`/slash/curly`{brace')(object).pop();
 ```
 
+Paths can have a dot `.` for self refernece and two dots `..` to reference the
+parent just like file paths. Below is a silly example. Parent paths are more
+useful in predicates and sub-queries.
+
+```javascript
+var abe = $q('/presidents/./15/../16/firstName')(presidents).pop();
+```
+
 ## One Wildcard Per Property
 
 In a path, you're allowed one and only one wildcard represented by a star
