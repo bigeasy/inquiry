@@ -3,19 +3,26 @@
 set -e
 
 if [ "$TRAVIS" = "true" ]; then
-  sudo apt-get install -q -q bc 2> /dev/null > /dev/null && echo '$ sudo apt-get install bc' && echo ''
+  echo '$ sudo apt-get install bc' && echo ''
+  sudo apt-get install -q -q bc 2> /dev/null > /dev/null
 fi
 
-t/sizes index.js
+t/sizes index.js | sed 's/^/    /'
 
 echo ""
 
 (proof run t/*/*.t.js | tee .proof.out | proof progress) || (proof errors < .proof.out) || exit 1
 
 if [ "$TRAVIS" = "true" ] || [ "$MINIFY" = "true" ]; then
+  echo "generating coverage"
+  t/cover
+
+  echo "submitting coverage to coveralls.io"
+  cat coverage/lcov.info | node_modules/.bin/coveralls > /dev/null
+
+  echo ""
   echo "minified"
   echo ""
-
   default=$(cat index.js | uglifyjs | gzip -c | wc -c)
   lift=$(cat index.js | uglifyjs --lift-vars | gzip -c | wc -c)
 
@@ -25,8 +32,8 @@ if [ "$TRAVIS" = "true" ] || [ "$MINIFY" = "true" ]; then
     cat $bak | uglifyjs > index.js
   else
     cat $bak | uglifyjs --lift-vars > index.js
-  fi 
- 
+  fi
+
   (proof run t/*/*.t.js | tee .proof.out | proof progress) || (proof errors < .proof.out) || exit 1
 fi
 
