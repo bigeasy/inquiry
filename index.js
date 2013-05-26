@@ -37,7 +37,7 @@
       // predicate to construct a function body.
       case "{":
         // Depth is the number of curly braces we've encountered. We match curly
-        // brances until it is time to pop.
+        // braces until it is time to pop.
         // **TODO**: Test against regular expressions. We are going to have to
         // document the one valid regular expression that we know of that we
         // cannot match: `/[/]/`.
