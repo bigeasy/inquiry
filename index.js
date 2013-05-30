@@ -146,7 +146,7 @@
       return stack;
     }, rest ];
   }
-  return function (query) { 
+  return function (query) {
     var func = parse(query)[0];
     return function (object) { return func({ object: object, path: [], i: 0 }, slice.call(arguments, 1)) };
   }
