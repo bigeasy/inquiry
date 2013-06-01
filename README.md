@@ -100,7 +100,7 @@ simply URL encoded path parts.
 var object = { "@#$%^&": { ">": 0, "%3E": 1 } };
 equal($q("%40%23%24%25%5E%26/%3E")(object).pop(), 0, 'encoded');
 equal($q("%40%23%24%25%5E%26/`%3E")(object).pop(), 1, 'escaped encoding');
-```      
+```
 
 I imagine this might be helpful if you want to add paths to URLs, but I've not
 found a use case in the wild. If you do find, one [drop me a
@@ -126,7 +126,7 @@ var abe = $('/presidents{$.lastName == "Lincoln"}')(presidents).pop();
 ```
 
 A predicate expression references arguments using the special variables `$1`
-through `$256`, each variable representing an argument by position. 
+through `$256`, each variable representing an argument by position.
 
 ```javascript
 var abe = $('/presidents{$.lastName == $1}')(presidents, 'Lincoln').pop();
@@ -232,7 +232,7 @@ Released: Sun Jul 22 19:47:59 UTC 2012.
  * Build on Travis CI. #5.
  * Upgrade to Proof 0.0.15. #8. #6.
  * Convert to a function compiler. #7.
- * Return an array always. #3. 
+ * Return an array always. #3.
 
 ### Version 0.0.0
 
