@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var inquiry = require("../..");
-require("proof")(6, function (equal) {
+require("proof")(7, function (equal) {
   var object, result;
   object = { firstName: "Abraham", lastName: "Lincoln" };
   equal(inquiry("{$.firstName == 'Abraham'}")(object).pop().lastName, 'Lincoln', 'rooted');
