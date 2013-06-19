@@ -1,7 +1,7 @@
 ! function (definition) {
-  if (typeof module == "object" && module.exports) module.exports = definition();
+  if (typeof window != "undefined") window.inquiry = definition;
   else if (typeof define == "function") define(definition);
-  else window.inquiry = definition();
+  else module.exports = definition();
 } (function () {
   var slice = [].slice;
 /*
