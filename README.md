@@ -269,9 +269,9 @@ ancestors. It's just like `..` in file paths.
 
 When comparing against parents and siblings you're going to want to used a
 parameterized JavaScript predicate to capture values in the current context into
-a new scope. **(At the time of writing, I can't think of a meaningful example
+a new scope. *(At the time of writing, I can't think of a meaningful example
 that uses the parent `..` operator without also using a parameterized JavaScript
-predicate. Suggestions are welcome.)**
+predicate. Suggestions are welcome.)*
 
 Here we look for any president that shares a first name with any another president.
 
