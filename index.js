@@ -13,19 +13,20 @@
 */
   function error (index) { return "invalid syntax at: " + index }
   function parse (query, stop) {
-    var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args;
-    if (query[0] != '/') {
-      if (/^[[{]/.test(query[0])) {
-        rest = '/.' + query;
-        index = -2;
-      } else {
-        rest = '/' + query;
-        index = -1;
-      }
-    }
+    var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args, slash = '/';
     while (rest && rest[0] != stop) {
+      if (rest[0] != '/') {
+        if (/^[[{]/.test(rest[0])) {
+          rest = '/.' + rest;
+          index = -2;
+        } else {
+          rest = slash + rest;
+          index = -slash.length;
+        }
+      }
+      slash = '';
       // Skip leading whitespaces.
-      $ = /^(\s*)(.*)$/.exec(rest), index += $[1].length;
+      //$ = /^(\s*)(.*)$/.exec(rest), index += $[1].length;
       // Match one or two slashes, followed by dots or a property name, plus an
       // optional predicate or subquery opener.
       $ = /^(\/{1,2})(\.\.|\.|(?:[^[{/`]|`.)*)([{[]?)(.*)/.exec(rest);
