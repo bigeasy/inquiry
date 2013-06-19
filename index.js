@@ -4,11 +4,13 @@
   else window.inquiry = definition();
 } (function () {
   var slice = [].slice;
+/*
   function die () {
     console.log.apply(console, slice.call(arguments, 0));
     process.exit(1);
   }
   function say () { console.log.apply(console, slice.call(arguments, 0)) }
+*/
   function error (index) { return "invalid syntax at: " + index }
   function parse (query, stop) {
     var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args;
