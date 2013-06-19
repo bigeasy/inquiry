@@ -106,7 +106,23 @@ I imagine this might be helpful if you want to add paths to URLs, but I've not
 found a use case in the wild. If you do find, one [drop me a
 line](https://github.com/bigeasy/inquiry/issues/12).
 
-## Predicates
+## Arrays
+
+Arrays are a special case. When we visit an array, if the path step is all
+digits, we simply use that path step as an index.
+
+```javascript
+equal( $('/presidents/15')(presidents).pop().lastName, 'Lincoln' );
+```
+
+If it is not all digits, we assume that we want to gather visit the property for
+every element in the array. This gathers values into the result array.
+
+```javascript
+equal( $('/presidents/lastName')(presidents)[15], 'Lincoln' );
+```
+
+## JavaScript Predicates
 
 Curly braces indicate predicates. Each step in the path can include a single
 predicate contianing a predicate expression. The predicate expression is simply
@@ -138,23 +154,7 @@ variable `$i`.
 var abe = $('/presidents{$i == 15}')(presidents).pop();
 ```
 
-## Arrays
-
-Arrays are a special case. When we visit an array, if the path step is all
-digits, we simply use that path step as an index.
-
-```javascript
-equal( $('/presidents/15')(presidents).pop().lastName, 'Lincoln' );
-```
-
-If it is not all digits, we assume that we want to gather visit the property for
-every element in the array. This gathers values into the result array.
-
-```javascript
-equal( $('/presidents/lastName')(presidents)[15], 'Lincoln' );
-```
-
-## Sub-Queries
+## Sub-Query Predicates
 
 Square brackets define sub-queries. Sub-queries are evaluated against the
 current object or against each object in an array if current object is an array.
