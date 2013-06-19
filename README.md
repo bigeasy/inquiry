@@ -30,10 +30,14 @@ hickory = $q('/p*{$.lastName == $1}')(object, "Jackson").pop();
 console.log("Found: " hickory.firstName + " " + hickory.lastName);
 ```
 
-Inquiry is a *tiny* library that can perform *complex* searches on
-*complicated*, *nested* collections JavaScript object graphs. 
+Inquiry is a **tiny** library that can perform **complex** searches on
+complicated **nested** collections JavaScript object graphs. 
 
-Inquiry supports *parameters*, *expressions*, and *sub-queries*. 
+Inquiry is a **functional** library that builds a reusable JavaScript function
+from a path expression.
+
+The path expression language supports **parameters**, **expressions**, and
+**sub-queries**. 
 
 ## Paths
 
