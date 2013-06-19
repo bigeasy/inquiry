@@ -100,13 +100,13 @@
             candidates.push({ object: object[name], path: Array.isArray(path[0]) ? path : [ object ].concat(path) });
           } else if (name == '.') {
             candidates.push(candidate);
+          } else if (name == '..') {
+            var subpath = path.slice();
+            candidates.unshift({ object: subpath.shift(), path: subpath, i: 0 });
           } else if (Array.isArray(object)) {
             for (j = object.length - 1; j > -1; --j) {
               stack.unshift({ object: object[j], path: [ object ].concat(path) });
             }
-          } else if (name == '..') {
-            var subpath = path.slice();
-            candidates.unshift({ object: subpath.shift(), path: subpath, i: 0 });
           } else if (~(star = name.indexOf('*'))) {
             for (key in object) {
               if (key.indexOf(name.substring(0, star)) == 0
