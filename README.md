@@ -30,6 +30,11 @@ hickory = $q('/p*{$.lastName == $1}')(object, "Jackson").pop();
 console.log("Found: " hickory.firstName + " " + hickory.lastName);
 ```
 
+Inquiry is a *tiny* library that can perform *complex* searches on
+*complicated*, *nested* collections JavaScript object graphs. 
+
+Inquiry supports *parameters*, *expressions*, and *sub-queries*. 
+
 ## Paths
 
 Paths are forward slash delimited. The path part begins right after the slash
@@ -68,6 +73,37 @@ useful in predicates and sub-queries.
 var abe = $q('/presidents/./15/../16/firstName')(presidents).pop();
 ```
 
+## Invocation
+
+**Now that you have a notion of what a path looks like, let's talk about
+invocation.**
+
+Inquiry is a function compiler. Inquiry compiles a path expression into a
+JavaScript function.
+
+```javascript
+var $q = require('inquiry');
+
+var firstNameByLastName = $q('/presidents{$.lastName = $1}/firstName');
+
+ok(byLastName(presidents, 'Lincoln').pop() == 'Abraham');
+ok(firstNames(presidents, 'Washington').shift() == 'George');
+```
+
+Inquiry is all functional like that. You can then call that JavaScript function
+however many times you'd like. You can pass the function to another function as
+a parameter.
+
+However, the Inquiry compiler is quick enough that you can simply compile and
+invoke in a one liner.
+
+```javascript
+var $q = require('inquiry');
+
+var abe = $q('/presidents{$.lastName = $1}/firstName')(presidents, 'Lincoln');
+ok(abe == 'Abraham');
+```
+
 ## One Wildcard Per Property
 
 In a path, you're allowed one and only one wildcard represented by a star
@@ -76,13 +112,13 @@ In a path, you're allowed one and only one wildcard represented by a star
 Wildcards help to make verbose queries terse.
 
 ```javascript
-var instances = $('reservationSet/reservation/instanceSet/instance')(object);
+var instances = $q('reservationSet/reservation/instanceSet/instance')(object);
 ```
 
 A few wildcards and the path is under control, but still readable.
 
 ```javascript
-var instances = $('r*Set/reservation/i*Set/instance')(object);
+var instances = $q('r*Set/reservation/i*Set/instance')(object);
 ```
 
 You're only allowed one wildcard per property name. Wildcards are used to tame
@@ -112,101 +148,143 @@ Arrays are a special case. When we visit an array, if the path step is all
 digits, we simply use that path step as an index.
 
 ```javascript
-equal( $('/presidents/15')(presidents).pop().lastName, 'Lincoln' );
+ok( $q('/presidents/15')(presidents).pop().lastName == 'Lincoln' );
 ```
 
 If it is not all digits, we assume that we want to gather visit the property for
 every element in the array. This gathers values into the result array.
 
 ```javascript
-equal( $('/presidents/lastName')(presidents)[15], 'Lincoln' );
+ok( $q('/presidents/lastName')(presidents)[15] == 'Lincoln' );
 ```
 
 ## JavaScript Predicates
 
-Curly braces indicate predicates. Each step in the path can include a single
-predicate contianing a predicate expression. The predicate expression is simply
-a JavaScript expression that is compiled to a function that returns a boolean.
+Curly braces indicate JavaScript
+[predicates](http://stackoverflow.com/questions/3230944/what-does-predicate-mean-in-the-context-of-computer-science).
+A JavaScript predicate is simply a JavaScript expression that is compiled to a
+function that returns a boolean. If the JavaScript expression that evaluates to
+`true`, the path is included in the result set.
+
+Each step in the path can include a single JavaScript predicate.
 
 A predicate expression references the current object using the varaible `$`.
 
 ```javascript
-var abe = $('{$.firstName == "Lincoln"}')(presidents[15]).pop();
+var abe = $q('{$.firstName == "Lincoln"}')(presidents[15]).pop();
 ```
 
 When a predicate expression is used with an array, it is tested against all the
 members of the array.
 
 ```javascript
-var abe = $('/presidents{$.lastName == "Lincoln"}')(presidents).pop();
+var abe = $q('/presidents{$.lastName == "Lincoln"}')(presidents).pop();
 ```
 
 A predicate expression references arguments using the special variables `$1`
 through `$256`, each variable representing an argument by position.
 
 ```javascript
-var abe = $('/presidents{$.lastName == $1}')(presidents, 'Lincoln').pop();
+var abe = $q('/presidents{$.lastName == $1}')(presidents, 'Lincoln').pop();
 ```
+
+You can negate a JavaScript predicate using an exclamation point `!`.
+
+```javascript
+var abe = $q('/presidents!{$.lastName != $1}')(presidents, 'Lincoln').pop();
+```
+
 A predicate expression can reference the index of an array using the special
 variable `$i`.
 
 ```javascript
-var abe = $('/presidents{$i == 15}')(presidents).pop();
+var abe = $q('/presidents{$i == 15}')(presidents).pop();
 ```
+
+You can also pass parameters into JavaScript predicates. If parameters are
+passed into the JavaScript predicate, the variables `$1` through `$256` are
+overwritten to hold the values for the scope of the JavaScript predicate.
+
+```javascript
+var abe = $q('/predicates{$1 == $2}($.lastName, $1)')(presidents, 'Lincoln').pop();
+```
+
+This scoping is not useful by itself, but it is quite useful in constructing
+complicated sub-query predicates.
 
 ## Sub-Query Predicates
 
-Square brackets define sub-queries. Sub-queries are evaluated against the
-current object or against each object in an array if current object is an array.
-
-A sub-query is evaluated as a predicate. If the sub-query matches one or more
-objects in the object context, the predicate is true for the current object.
-
-```javascript
-var instance = $('/instances[tag{$.key = "name" && $.value = $1}]')(instances, "server").pop();
-```
-
-**TODO**: Going back up is not yet implemented. Read past this bit.
+Square brackets define sub-query 
+[predicates](http://stackoverflow.com/questions/3230944/what-does-predicate-mean-in-the-context-of-computer-science).
+A sub-query predicate is a query that is performed in the context of each
+object that matches the path, current object or against each object in an array
+if the object that matches the path is an array. If the sub-query returns any
+objects at all, the predicate is considered true and the object matches.
 
 ```javascript
-var abe = $('/presidents[..{$i == $$i - 1}].lastName == "Buchanan"]')(presidents).pop();
+var instances = [{
+  id: 1,
+  tags: [{
+    key: 'name', value: 'server'
+  }, {
+    key: 'arch', value: 'i386'
+  }]
+}, {
+  id: 2,
+  tags: [{
+    key: 'name', value: 'balancer'
+  }, {
+    key: 'arch', value: 'x86_64'
+  }]
+}, {
+  id: 3,
+  tags: []
+}];
+var tagged = $q('/instances[tags/name]')(instances, "server");
+ok(tagged.length == 2);
 ```
 
-Or maybe...
+In the above, for each `instance` the sub-query looks for `tags/name`. This
+matches any of the `instance` objects who's `tags` array has an object with a
+`name` property, regardless of value. 
+
+You can nest JavaScript predicates inside sub-query predicates.
 
 ```javascript
-var abe = $('/presidents[$('../' + ($i - 1)).lastName == "Buchanan"]')(presidents).pop();
+var server = $q('/instances[tags{$.name == $1}]')(instances, 'server').pop();
 ```
 
-Also...
+In the above, for each `instance` object we look in the `tags` array for a
+`name` property with the value "server."
+
+## Parents and Siblings in Sub-Queries
+
+You can use parent operator `..` to compare against a parent in a sub-query
+predicate, or multiple parent operators `../..` to compare against other
+ancestors. It's just like `..` in file paths.
+
+When comparing against parents and siblings you're going to want to used a
+parameterized JavaScript predicate to capture values in the current context into
+a new scope. **(At the time of writing, I can't think of a meaningful example
+that uses the parent `..` operator without also using a parameterized JavaScript
+predicate. Suggestions are welcome.)**
+
+Here we look for any president that shares a first name with any another president.
 
 ```javascript
-var abe = $('/presidents[$(..[$i == $1], $i - 1).lastName == "Buchanan"]')(presidents).pop();
-var abe = $('/presidents[..{$i == $1 && $.lastName == "Buchanan"}]')(presidents).pop();
+var dup = $q('/presidents[..{$.lastName == $1 && $i != $2}($.firstName, $i)]')(presidents).pop();
+ok(dup.length == 7);
+ok(dup[dup.length - 1].firstName = 'James');
 ```
 
-But, that is a scan, when it can be an index, so...
+Here we look for a president that does not share a first name with any other
+president.
 
 ```javascript
-var abe = $('/presidents[$(../$1, $i - 1).lastName == "Buchanan"]')(presidents).pop();
+var uniq = $q('/presidents[..!{$.lastName == $1 && $i != $2}($.firstName, $i)]')(presidents).pop();
+ok(uniq.length == 9);
+ok(uniq[uniq.length - 1].firstName = 'Abraham');
 ```
-
-But, `$1` is very much a valid path identifier. Quote it? Certinaly, JSON path
-will escape the dollar sign.
-
-Latter is simplier and can still take advantage of once a visit.
-
-The above shows some of the goals of the language.
-
- * Match property names using a "starts with" operator "+", to help keep
-   patterns terse.
- * Full JavaScript evaluation in conditionals.
- * Parameterization so that patterns do not have to be created through
-   catenation, making them unreadable.
- * Easy implementation as MicroJS.
-
-Rather than attempting to map CSS selectors or XPath to JSON, I'd like to create
-a new little language and utility for queries against larger JSON documents.
 
 ## Change Log
 
