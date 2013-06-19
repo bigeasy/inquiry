@@ -214,6 +214,13 @@ Changes for each release.
 
 ### Version 0.0.2
 
+ * Test coverage with Istanbul and Coveralls.
+ * Use `in` operator instead of comparing to `undefined`. #30.
+ * Apply self operator `.` to arrays. #31.
+ * Implement JSON pointer.
+ * Fix select `null` and zero. #29.
+ * Escape special characters. #20.
+ * Implement parent `..` operator. #27.
  * Implement sub-queries. #15.
  * Apply wildcards after an array. #22.
  * Update `t/sizes` minification report for Bash 3.0. #23.
