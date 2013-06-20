@@ -1,6 +1,6 @@
 {   "name":             "inquiry"
 ,   "description":      "A parameterized JSON path language for Node.js and the browser."
-,   "version":          "0.0.1"
+,   "version":          "0.0.2"
 ,   "homepage":         "http://bigeasy.github.com/inquiry"
 ,   "repository":       "git://github.com/bigeasy/inquiry.git"
 ,   "author":           "Alan Gutierrez"
