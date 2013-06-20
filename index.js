@@ -52,7 +52,7 @@
         });
         args.length = 0;
         for (i = 0; i < nesting; i++) {
-          var prefix = Array(i + 2).join('$'); 
+          var prefix = Array(i + 2).join('$');
           args.push(prefix);
           args.push(prefix + 'i');
         }
