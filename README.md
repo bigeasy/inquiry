@@ -176,6 +176,9 @@ ok( $q('lastName')(object.presidents).shift() == 'Washington' );
 ok( $q('15/lastName')(object.presidents).shift() == 'Lincoln' );
 ```
 
+Note that we **do not** use brackets `[]` to indicate an array element. Brackets
+are used to define sub-query predicates.
+
 ## JavaScript Predicates
 
 Curly braces indicate JavaScript
