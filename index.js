@@ -11,7 +11,6 @@
   }
   function say () { console.log.apply(console, slice.call(arguments, 0)) }
 */
-  function error (index) { return "invalid syntax at: " + index }
   function parse (query, nesting, stop) {
     var i, I, args = [], rest = query, $, index, expression = [], depth = 0, struct, source, args, slash = '/';
     while (rest && rest[0] != stop) {
@@ -31,7 +30,7 @@
       // optional predicate or subquery opener.
       $ = /^(\/{1,2})(\.\.|\.|(?:!(?![[{])|[^\]![{/`]|`.)*)((!?)([[{]))?(.*)/.exec(rest);
       //$ = /^(\/{1,2})(\.\.|\.|(?:[^![{/`]|`.)*)((?:![|!{|[|{)?)(.*)/.exec(rest);
-      if (!$) throw new Error(error(0));
+      if (!$) throw new Error("bad pattern");
       $[2] = decodeURIComponent($[2].replace(/`%/g, '%25')).replace(/`(.)/, "$1");
       rest = $[6];
       struct = $.slice(1, 3);
@@ -46,15 +45,11 @@
         // document the one valid regular expression that we know of that we
         // cannot match: `/[/]/`.
         depth = 1;
-        source = ($[4] || '') + '(';
-        while ($ = /^(?:[^'"{}]*|'(?:[^\\']|\\.)*'|"(?:[^\\"]|\\.)*")*/.exec(rest)) {
-          source += $[0];
-          rest = rest.substring($[0].length);
-          if (rest[0] == '}') {
-            break;
-          }
-        }
-        rest = rest.substring(1);
+        source = $[4] + '(';
+        $ = /^(((?:[^'"}]*|'(?:[^\\']|\\.)*'|"(?:[^\\"]|\\.)*")*)})/.exec(rest);
+        if (!$) throw new Error("bad pattern");
+        source += $[2];
+        rest = rest.substring($[1].length);
         depth = 0;
         source.replace(/\$(\d+)/, function ($, number) {
           depth = Math.max(depth, +number);
