@@ -205,17 +205,6 @@ variable `$i`.
 var abe = $q('/presidents{$i == 15}')(presidents).pop();
 ```
 
-You can also pass parameters into JavaScript predicates. If parameters are
-passed into the JavaScript predicate, the variables `$1` through `$256` are
-overwritten to hold the values for the scope of the JavaScript predicate.
-
-```javascript
-var abe = $q('/predicates{$1 == $2}($.lastName, $1)')(presidents, 'Lincoln').pop();
-```
-
-This scoping is not useful by itself, but it is quite useful in constructing
-complicated sub-query predicates.
-
 ## Sub-Query Predicates
 
 Square brackets define sub-query 
@@ -228,6 +217,7 @@ objects at all, the predicate is considered true and the object matches.
 ```javascript
 var instances = [{
   id: 1,
+  running: true,
   tags: [{
     key: 'name', value: 'server'
   }, {
@@ -242,9 +232,10 @@ var instances = [{
   }]
 }, {
   id: 3,
+  running: true,
   tags: []
 }];
-var tagged = $q('/instances[tags/name]')(instances, "server");
+var tagged = $q('/instances[tags/name]')(instances);
 ok(tagged.length == 2);
 ```
 
@@ -261,17 +252,34 @@ var server = $q('/instances[tags{$.name == $1}]')(instances, 'server').pop();
 In the above, for each `instance` object we look in the `tags` array for a
 `name` property with the value "server."
 
-## Parents and Siblings in Sub-Queries
-
 You can use parent operator `..` to compare against a parent in a sub-query
 predicate, or multiple parent operators `../..` to compare against other
 ancestors. It's just like `..` in file paths.
 
-When comparing against parents and siblings you're going to want to used a
+The following will get the tags of all instances that have a `running` property.
+
+```javascript
+var tags = $q('/instances/tags[../running]')(instances).pop();
+```
+
+Granted, the above is not terribly useful since it returns the tags, but not the
+instance itself, so the tags have no context. Really useful queries of parents
+and siblings require capturing some of the context of the object at the current
+path. For that we use parameterized sub-query predicates.
+
+## Parameterized Sub-Query Predicates
+
+Where sub-query predicates get really useful is when you use properties of the
+object at current path in the sub-query.
+
+Sub-query predicates accept parameters that capture variables from the object at
+the current path and create a new scope of the sub-query. If parameters are
+passed into the sub-query predicate, the variables `$1` through `$256` are
+overwritten to hold the values for the scope of the JavaScript predicate.
+
+When comparing against parents and siblings you're going to want to use a
 parameterized JavaScript predicate to capture values in the current context into
-a new scope. *(At the time of writing, I can't think of a meaningful example
-that uses the parent `..` operator without also using a parameterized JavaScript
-predicate. Suggestions are welcome.)*
+a new scope.
 
 Here we look for any president that shares a first name with any another president.
 
@@ -280,6 +288,10 @@ var dup = $q('/presidents[..{$.lastName == $1 && $i != $2}($.firstName, $i)]')(p
 ok(dup.length == 7);
 ok(dup[dup.length - 1].firstName = 'James');
 ```
+
+We passed in the first name of the current president and his index in the array
+so that we could compare his first name to all the presidents in the array,
+excluding him by his index.
 
 Here we look for a president that does not share a first name with any other
 president.

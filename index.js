@@ -54,14 +54,6 @@
           }
         }
         rest = rest.substring(1);
-        var params = [];
-        if ($ = /^\(((?:\$(?:i|\d+))(?:\s*,\s*\$(?:i|\d+))*)\)(.*)/.exec(rest)) {
-          rest = $[2];
-          var split = $[1].split(/\s*,\s*/);
-          for (var i = 0; i < split.length; i++) {
-            params.push(split[i].substring(1));
-          }
-        }
         depth = 0;
         source.replace(/\$(\d+)/, function ($, number) {
           depth = Math.min(depth ? depth : 256, number);
@@ -75,15 +67,26 @@
           return function (candidate, vargs) {
             return predicate.apply(candidate.object, [ candidate.object, candidate.i ].concat(vargs));
           }
-        })(Function.apply(Function, args)));
-        struct.push(params);
+        })(Function.apply(Function, args)), []);
         break;
       // We want to consume the contents of brackets as a sub-expression, so we
       // call ourselves recursively.
       case "[":
-        $ = parse(rest, "]");
-        struct.push($[0], []);
+        struct.push((function (negate, subquery) {
+          return function (candidate, args) {
+            return negate ? ! subquery(candidate, args).length : subquery(candidate, args).length;
+          }
+        })($[4] == '!', ($ = parse(rest, "]"))[0]));
         rest = $[1].slice(1);
+        var params = [];
+        if ($ = /^\(((?:\$(?:i|\d+))(?:\s*,\s*\$(?:i|\d+))*)\)(.*)/.exec(rest)) {
+          rest = $[2];
+          var split = $[1].split(/\s*,\s*/);
+          for (var i = 0; i < split.length; i++) {
+            params.push(split[i].substring(1));
+          }
+        }
+        struct.push(params);
         break;
       default:
         struct.push(null);
