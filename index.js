@@ -3,7 +3,6 @@
   else if (typeof define == "function") define(definition);
   else module.exports = definition();
 } (function () {
-  var slice = [].slice;
 /*
   function die () {
     console.log.apply(console, slice.call(arguments, 0));
@@ -12,7 +11,7 @@
   function say () { console.log.apply(console, slice.call(arguments, 0)) }
 */
   function parse (query, nesting, stop) {
-    var i, I, args = [], rest = query, $,  expression = [], depth = 0, struct, source, args, slash = '/';
+    var expression = [], args = [], rest = query, slash = '/', depth = 0, struct, source, i, I, $;
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
@@ -72,8 +71,9 @@
       case "[":
         struct.push((function (negate, subquery) {
           return function (candidate, args) {
-            return negate ? ! subquery.call(candidate.object, candidate, [ candidate.object, candidate.i ].concat(args)).length
-                          : subquery.call(candidate.object, candidate, [ candidate.object, candidate.i ].concat(args)).length;
+            var length = subquery.call(candidate.object,
+              candidate, [ candidate.object, candidate.i ].concat(args)).length
+            return negate ? ! length : length;
           }
         })($[3] == '!', ($ = parse(rest, nesting + 1, "]"))[0]));
         rest = $[1].slice(1);
@@ -132,6 +132,6 @@
   }
   return function (query) {
     var func = parse(query, 1)[0];
-    return function (object) { return func({ object: object, path: [], i: 0 }, slice.call(arguments, 1)) };
+    return function (object) { return func({ object: object, path: [], i: 0 }, [].slice.call(arguments, 1)) };
   }
 });
