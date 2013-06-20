@@ -283,7 +283,7 @@ was invoked.
 Here we look for any president that shares a first name with any another president.
 
 ```javascript
-var dup = $q('/presidents[..{$.firstName == $$.firstName && $i != $$i}]')(presidents).pop();
+var dup = $q('/presidents[..{$.firstName == $$.firstName && $i != $$i}]')(object);
 ok(dup.length == 7);
 ok(dup[dup.length - 1].firstName = 'James');
 ```
@@ -295,9 +295,9 @@ Here we look for a president that does not share a first name with any other
 president.
 
 ```javascript
-var uniq = $q('/presidents[..!{$.firstName == $$.firstName && $i != $$i}]')(presidents).pop();
+var uniq = $q('/presidents![..{$.firstName == $$.firstName && $i != $$i}]')(object);
 ok(uniq.length == 9);
-ok(uniq[uniq.length - 1].firstName = 'Abraham');
+ok(uniq[uniq.length - 1].firstName == 'Abraham');
 ```
 
 If you're wondering, yes, you can nest deeper than a single sub-query; a `$$$`

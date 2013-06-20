@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-require("proof")(20, function (equal, ok) {
+require("proof")(24, function (equal, ok) {
   var $q = require("../.."), object = require('./presidents'), result;
 
   var hickory = $q('/p*{$.lastName == $1}')(object, "Jackson").pop();
@@ -95,8 +95,14 @@ require("proof")(20, function (equal, ok) {
   } ()
 
   ! function () {
-    var dup = $q('/presidents[..{$.lastName == $1 && $i != $2}]($.firstName, $i)')(presidents).pop();
+    var dup = $q('/presidents[..{$.firstName == $$.firstName && $i != $$i}]')(object);
     ok(dup.length == 7);
     ok(dup[dup.length - 1].firstName = 'James');
-  }
+  } ()
+
+  ! function () {
+    var uniq = $q('/presidents![..{$.firstName == $$.firstName && $i != $$i}]')(object);
+    ok(uniq.length == 9);
+    ok(uniq[uniq.length - 1].firstName == 'Abraham');
+  } ()
 });
