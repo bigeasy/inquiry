@@ -356,6 +356,8 @@ Changes for each release.
 
 ### Version 0.0.2
 
+Thu Jun 20 21:35:33 UTC 2013
+
  * Note that brackets are not for arrays. #32.
  * Add invocation against arrays to `README.md`. #42.
  * Reduced to under 1k minified and gzipped.
