@@ -12,8 +12,8 @@
   function say () { console.log.apply(console, slice.call(arguments, 0)) }
 */
   function error (index) { return "invalid syntax at: " + index }
-  function parse (query, stop, negate) {
-    var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args, slash = '/';
+  function parse (query, nesting, stop) {
+    var i, I, args = [], rest = query, $, index, expression = [], depth = 0, struct, source, args, slash = '/';
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
@@ -59,7 +59,12 @@
         source.replace(/\$(\d+)/, function ($, number) {
           depth = Math.max(depth, +number);
         });
-        args = [ '$', '$i' ];
+        args.length = 0;
+        for (i = 0; i < nesting; i++) {
+          var prefix = Array(i + 2).join('$'); 
+          args.push(prefix);
+          args.push(prefix + 'i');
+        }
         for (i = 0; i < depth; i++) {
           args.push('$' + (i + 1));
         }
@@ -75,19 +80,11 @@
       case "[":
         struct.push((function (negate, subquery) {
           return function (candidate, args) {
-            return negate ? ! subquery(candidate, args).length : subquery(candidate, args).length;
+            return negate ? ! subquery.call(candidate.object, candidate, [ candidate.object, candidate.i ].concat(args)).length
+                          : subquery.call(candidate.object, candidate, [ candidate.object, candidate.i ].concat(args)).length;
           }
-        })($[4] == '!', ($ = parse(rest, "]"))[0]));
+        })($[4] == '!', ($ = parse(rest, nesting + 1, "]"))[0]));
         rest = $[1].slice(1);
-        var params = [];
-        if ($ = /^\(((?:\$(?:i|\d+))(?:\s*,\s*\$(?:i|\d+))*)\)(.*)/.exec(rest)) {
-          rest = $[2];
-          var split = $[1].split(/\s*,\s*/);
-          for (var i = 0; i < split.length; i++) {
-            params.push(split[i].substring(1));
-          }
-        }
-        struct.push(params);
         break;
       default:
         struct.push(null);
@@ -98,7 +95,7 @@
       var candidates = [], stack = [ candidate ],
           star, name, key, i, j, I, predicate, path, object, params;
       for (i = 0, I = expression.length; i < I; i++) {
-        name = expression[i][1], predicate = expression[i][2], params = expression[i][3];
+        name = expression[i][1], predicate = expression[i][2];
         while (stack.length) {
           candidate = stack.shift(), object = candidate.object, path = candidate.path;
           if (name in object) {
@@ -129,18 +126,6 @@
               for (j = object.length - 1; j > -1; --j) {
                 candidates.unshift({ object: object[j], path: [ object ].concat(path), i: j });
               }
-            } else if (params.length) {
-              var args = [];
-              for (j = 0; j < params.length; j++) {
-                if (params[j] == 'i') {
-                  args.push(candidate.i);
-                } else {
-                  args.push(vargs[params[j]]);
-                }
-              }
-              if (predicate(candidate, args)) {
-                stack.push(candidate);
-              }
             } else if (predicate(candidate, vargs)) {
               stack.push(candidate);
             }
@@ -154,7 +139,7 @@
     }, rest ];
   }
   return function (query) {
-    var func = parse(query)[0];
+    var func = parse(query, 1)[0];
     return function (object) { return func({ object: object, path: [], i: 0 }, slice.call(arguments, 1)) };
   }
 });

@@ -271,43 +271,37 @@ ok(tags.length == 2);
 
 Granted, the above is not terribly useful since it returns the tags, but not the
 instance itself, so the tags have no context. Really useful queries of parents
-and siblings require capturing some of the context of the object at the current
-path. For that we use parameterized sub-query predicates.
+and siblings require capturing the properties of the object at the current
+path with the properties of a parent or sibling.
 
-## Parameterized Sub-Query Predicates
-
-Where sub-query predicates get really useful is when you use properties of the
-object at current path in the sub-query.
-
-Sub-query predicates accept parameters that capture variables from the object at
-the current path and create a new scope of the sub-query. If parameters are
-passed into the sub-query predicate, the variables `$1` through `$256` are
-overwritten to hold the values for the scope of the JavaScript predicate.
-
-When comparing against parents and siblings you're going to want to use a
-parameterized JavaScript predicate to capture values in the current context into
-a new scope.
+A sub-query predicate can reference the context of query that invoked it using
+the variable `$$`. This variable references the context object of the outer
+query at when the sub-query predicate was invoked. The variable `$$i` contains
+the index of the context object of the outer query when the sub-query predicate
+was invoked.
 
 Here we look for any president that shares a first name with any another president.
 
 ```javascript
-var dup = $q('/presidents[..{$.lastName == $1 && $i != $2}($.firstName, $i)]')(presidents).pop();
+var dup = $q('/presidents[..{$.firstName == $$.firstName && $i != $$i}]')(presidents).pop();
 ok(dup.length == 7);
 ok(dup[dup.length - 1].firstName = 'James');
 ```
 
-We passed in the first name of the current president and his index in the array
-so that we could compare his first name to all the presidents in the array,
-excluding him by his index.
+We compared the first name of the outer president with the first names of all the other
+presidents, excluding the outer president himself by his index.
 
 Here we look for a president that does not share a first name with any other
 president.
 
 ```javascript
-var uniq = $q('/presidents[..!{$.lastName == $1 && $i != $2}($.firstName, $i)]')(presidents).pop();
+var uniq = $q('/presidents[..!{$.firstName == $$.firstName && $i != $$i}]')(presidents).pop();
 ok(uniq.length == 9);
 ok(uniq[uniq.length - 1].firstName = 'Abraham');
 ```
+
+If you're wondering, yes, you can nest deeper than a single sub-query; a `$$$`
+variable and a `$$$i` variable will be created.
 
 ## Concerns and Decisions
 
