@@ -338,6 +338,18 @@ ok(uniq.length == 9);
 ok(uniq[uniq.length - 1].firstName == 'Abraham');
 ```
 
+## Errors
+
+Inquiry is a minimal path language for maximum effect. Error reporting is
+minimal, too. If you give it a bad pattern, it will raise an exception, but it
+doesn't offer much in the way of suggestions to fix the pattern. Diagnostics of
+that sort would be expensive.
+
+Most of your patterns will be simple and obvious, so you're not going to want to
+pay for the complexity of details diagnostics. If you're having trouble with a
+complicated pattern, try building it incrementally, adding the bits and pieces
+to the pattern so you'll see when it breaks.
+
 ## Change Log
 
 Changes for each release.
