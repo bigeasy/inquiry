@@ -49,7 +49,7 @@
         source += $[2];
         rest = rest.substring($[1].length);
         depth = 0;
-        source.replace(/\$(\d+)/, function ($, number) {
+        source.replace(/\$(\d+)/g, function ($, number) {
           depth = Math.max(depth, +number);
         });
         args.length = 0;
