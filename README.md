@@ -356,6 +356,20 @@ Changes for each release.
 
 ### Version 0.0.2
 
+ * Note that brackets are not for arrays. #32.
+ * Add invocation against arrays to `README.md`. #42.
+ * Reduced to under 1k minified and gzipped.
+ * Complete test of all `README.md` examples. #41.
+ * Replace parameters with doubled dollar signs. #43.
+ * Test the `README.md` examples. #41.
+ * Negate predicates. #36.
+ * Implement sub-query predicate parameters. #40.
+ * Implement multiple predicates. #26.
+ * Test searching against nested arrays. #25.
+ * Test parent operator against an array. #33.
+ * Test that paths can continue past predicates. #35.
+ * Test coverage of AMD bandages. #37.
+ * Rewrite sub-query documentation. #28.
  * Test coverage with Istanbul and Coveralls.
  * Use `in` operator instead of comparing to `undefined`. #30.
  * Apply self operator `.` to arrays. #31.
