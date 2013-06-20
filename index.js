@@ -12,15 +12,13 @@
   function say () { console.log.apply(console, slice.call(arguments, 0)) }
 */
   function parse (query, nesting, stop) {
-    var i, I, args = [], rest = query, $, index, expression = [], depth = 0, struct, source, args, slash = '/';
+    var i, I, args = [], rest = query, $,  expression = [], depth = 0, struct, source, args, slash = '/';
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
           rest = '/.' + rest;
-          index = -2;
         } else {
           rest = slash + rest;
-          index = -slash.length;
         }
       }
       slash = '';
