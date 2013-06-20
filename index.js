@@ -29,7 +29,7 @@
       //$ = /^(\s*)(.*)$/.exec(rest), index += $[1].length;
       // Match one or two slashes, followed by dots or a property name, plus an
       // optional predicate or subquery opener.
-      $ = /^(\/{1,2})(\.\.|\.|(?:!(?![[{])|[^![{/`]|`.)*)((!?)([[{]))?(.*)/.exec(rest);
+      $ = /^(\/{1,2})(\.\.|\.|(?:!(?![[{])|[^![\]{/`]|`.)*)((!?)([[{]))?(.*)/.exec(rest);
       //$ = /^(\/{1,2})(\.\.|\.|(?:[^![{/`]|`.)*)((?:![|!{|[|{)?)(.*)/.exec(rest);
       if (!$) throw new Error(error(0));
       $[2] = decodeURIComponent($[2].replace(/`%/g, '%25')).replace(/`(.)/, "$1");
@@ -57,7 +57,7 @@
         rest = rest.substring(1);
         depth = 0;
         source.replace(/\$(\d+)/, function ($, number) {
-          depth = Math.min(depth ? depth : 256, number);
+          depth = Math.max(depth, +number);
         });
         args = [ '$', '$i' ];
         for (i = 0; i < depth; i++) {

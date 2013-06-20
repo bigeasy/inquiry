@@ -46,7 +46,7 @@ and ends at the first unescaped forward slash, open square bracket, open curly
 brace; `/`, `` [ ``, `{`.
 
 ```javascript
-var abe = $q('/presidents/16/firstName')(presidents).pop();
+var abe = $q('/presidents/15/firstName')(object).pop();
 ```
 
 This allows you to put most things in your paths, you only need to escape the
@@ -74,7 +74,7 @@ parent just like file paths. Below is a silly example. Parent paths are more
 useful in predicates and sub-queries.
 
 ```javascript
-var abe = $q('/presidents/./15/../16/firstName')(presidents).pop();
+var abe = $q('/presidents/14/../15/./firstName')(object).pop();
 ```
 
 ## Invocation
@@ -90,8 +90,8 @@ var $q = require('inquiry');
 
 var firstNameByLastName = $q('/presidents{$.lastName = $1}/firstName');
 
-ok(byLastName(presidents, 'Lincoln').pop() == 'Abraham');
-ok(firstNames(presidents, 'Washington').shift() == 'George');
+ok(byLastName(object, 'Lincoln').pop() == 'Abraham');
+ok(firstNames(object, 'Washington').pop() == 'George');
 ```
 
 Inquiry is all functional like that. You can then call that JavaScript function
@@ -104,7 +104,7 @@ invoke in a one liner.
 ```javascript
 var $q = require('inquiry');
 
-var abe = $q('/presidents{$.lastName = $1}/firstName')(presidents, 'Lincoln');
+var abe = $q('/presidents{$.lastName == $1}/firstName')(object, 'Lincoln');
 ok(abe == 'Abraham');
 ```
 
@@ -152,14 +152,14 @@ Arrays are a special case. When we visit an array, if the path step is all
 digits, we simply use that path step as an index.
 
 ```javascript
-ok( $q('/presidents/15')(presidents).pop().lastName == 'Lincoln' );
+ok( $q('/presidents/15')(object).pop().lastName == 'Lincoln' );
 ```
 
-If it is not all digits, we assume that we want to gather visit the property for
-every element in the array. This gathers values into the result array.
+If it is not all digits, we assume that we want to gather the property for every
+element in the array. This gathers values into the result array.
 
 ```javascript
-ok( $q('/presidents/lastName')(presidents)[15] == 'Lincoln' );
+ok( $q('/presidents/lastName')(object)[15] == 'Lincoln' );
 ```
 
 ## JavaScript Predicates
@@ -175,34 +175,34 @@ Each step in the path can include a single JavaScript predicate.
 A predicate expression references the current object using the varaible `$`.
 
 ```javascript
-var abe = $q('{$.firstName == "Lincoln"}')(presidents[15]).pop();
+var abe = $q('{$.lastName == "Lincoln"}')(object.presidents[15]).pop();
 ```
 
 When a predicate expression is used with an array, it is tested against all the
 members of the array.
 
 ```javascript
-var abe = $q('/presidents{$.lastName == "Lincoln"}')(presidents).pop();
+var abe = $q('/presidents{$.lastName == "Lincoln"}')(object).pop();
 ```
 
 A predicate expression references arguments using the special variables `$1`
 through `$256`, each variable representing an argument by position.
 
 ```javascript
-var abe = $q('/presidents{$.lastName == $1}')(presidents, 'Lincoln').pop();
+var abe = $q('/presidents{$.lastName == $1}')(object, 'Lincoln').pop();
 ```
 
 You can negate a JavaScript predicate using an exclamation point `!`.
 
 ```javascript
-var abe = $q('/presidents!{$.lastName != $1}')(presidents, 'Lincoln').pop();
+var abe = $q('/presidents!{$.lastName != "Lincoln"}')(object).pop();
 ```
 
 A predicate expression can reference the index of an array using the special
 variable `$i`.
 
 ```javascript
-var abe = $q('/presidents{$i == 15}')(presidents).pop();
+var abe = $q('/presidents{$i == 15}')(object).pop();
 ```
 
 ## Sub-Query Predicates
@@ -215,38 +215,40 @@ if the object that matches the path is an array. If the sub-query returns any
 objects at all, the predicate is considered true and the object matches.
 
 ```javascript
-var instances = [{
-  id: 1,
-  running: true,
-  tags: [{
-    key: 'name', value: 'server'
+var datacenter = {
+  instances: [{
+    id: 1,
+    running: true,
+    tags: [{
+      key: 'name', value: 'server'
+    }, {
+      key: 'arch', value: 'i386'
+    }]
   }, {
-    key: 'arch', value: 'i386'
-  }]
-}, {
-  id: 2,
-  tags: [{
-    key: 'name', value: 'balancer'
+    id: 2,
+    tags: [{
+      key: 'name', value: 'balancer'
+    }, {
+      key: 'arch', value: 'x86_64'
+    }]
   }, {
-    key: 'arch', value: 'x86_64'
+    id: 3,
+    running: true,
+    tags: []
   }]
-}, {
-  id: 3,
-  running: true,
-  tags: []
-}];
-var tagged = $q('/instances[tags/name]')(instances);
+};
+var tagged = $q('/instances[tags/key]')(datacenter);
 ok(tagged.length == 2);
 ```
 
-In the above, for each `instance` the sub-query looks for `tags/name`. This
+In the above, for each `instance` the sub-query looks for `tags/key`. This
 matches any of the `instance` objects who's `tags` array has an object with a
-`name` property, regardless of value.
+`key` property, regardless of value.
 
 You can nest JavaScript predicates inside sub-query predicates.
 
 ```javascript
-var server = $q('/instances[tags{$.name == $1}]')(instances, 'server').pop();
+var server = $q('/instances[tags{$.key == "name" && $.value == $1}]')(datacenter, 'server').pop();
 ```
 
 In the above, for each `instance` object we look in the `tags` array for a
@@ -256,10 +258,15 @@ You can use parent operator `..` to compare against a parent in a sub-query
 predicate, or multiple parent operators `../..` to compare against other
 ancestors. It's just like `..` in file paths.
 
+***However***, Inquiry will dive into an array so, so to get back out of an
+array, you need to use `../..`. Use `..` to go to the other array elements and
+`../..` to go up to the object that contains the array.
+
 The following will get the tags of all instances that have a `running` property.
 
 ```javascript
-var tags = $q('/instances/tags[../running]')(instances).pop();
+var tags = $q('/instances/tags[../../running]')(instances);
+ok(tags.length == 2);
 ```
 
 Granted, the above is not terribly useful since it returns the tags, but not the
@@ -301,6 +308,10 @@ var uniq = $q('/presidents[..!{$.lastName == $1 && $i != $2}($.firstName, $i)]')
 ok(uniq.length == 9);
 ok(uniq[uniq.length - 1].firstName = 'Abraham');
 ```
+
+## Concerns and Decisions
+
+ * What is the correct value when the parent operator `..` goes beyond the root.
 
 ## Change Log
 
