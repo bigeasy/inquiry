@@ -46,8 +46,8 @@ require("proof")(30, function (equal, ok) {
   ! function () {
     ok( $q('presidents/15')(object).pop().lastName == 'Lincoln', 'index' );
     ok( $q('presidents/lastName')(object)[15] == 'Lincoln', 'map' );
-    ok( $q('lastName')(object.presidents).shift() == 'Washington' );
-    ok( $q('15/lastName')(object.presidents).shift() == 'Lincoln' );
+    ok( $q('lastName')(object.presidents).shift() == 'Washington', 'against array' );
+    ok( $q('15/lastName')(object.presidents).shift() == 'Lincoln', 'against array element' );
   } ()
 
   ! function () {
@@ -102,19 +102,20 @@ require("proof")(30, function (equal, ok) {
 
   ! function () {
     var dup = $q('presidents[..{$.firstName == $$.firstName && $i != $$i}]')(object);
-    ok(dup.length == 7);
-    ok(dup[dup.length - 1].firstName = 'James');
+    ok(dup.length == 7, 'reference outer context length');
+    ok(dup[dup.length - 1].firstName = 'James', 'referece outer context');
   } ()
 
   ! function () {
     var uniq = $q('presidents![..{$.firstName == $$.firstName && $i != $$i}]')(object);
-    ok(uniq.length == 9);
-    ok(uniq[uniq.length - 1].firstName == 'Abraham');
+    ok(uniq.length == 9, 'negated reference outer context length');
+    ok(uniq[uniq.length - 1].firstName == 'Abraham', 'negated reference outer context');
   } ()
 
   ! function () {
     var uniq = $q('![..{$.firstName == $$.firstName && $i != $$i}]')(object.presidents);
-    ok(uniq.length == 9);
-    ok(uniq[uniq.length - 1].firstName == 'Abraham');
+    ok(uniq.length == 9, 'negated reference outer context against array length');
+    ok(uniq[uniq.length - 1].firstName == 'Abraham',
+       'negated reference outer context against array length');
   } ()
 });
