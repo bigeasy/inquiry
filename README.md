@@ -286,6 +286,8 @@ ancestors. It's just like `..` in file paths.
 array, you need to use `../..`. Use `..` to go to the other array elements and
 `../..` to go up to the object that contains the array.
 
+If you go up beyond the root, bad things happen. Don't do it.
+
 The following will get the tags of all instances that have a `running` property.
 
 ```javascript
@@ -335,10 +337,6 @@ var uniq = $q('![..{$.firstName == $$.firstName && $i != $$i}]')(object.presiden
 ok(uniq.length == 9);
 ok(uniq[uniq.length - 1].firstName == 'Abraham');
 ```
-
-## Concerns and Decisions
-
- * What is the correct value when the parent operator `..` goes beyond the root.
 
 ## Change Log
 
