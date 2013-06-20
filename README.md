@@ -39,6 +39,12 @@ from a path expression.
 The path expression language supports **parameters**, **expressions**, and
 **sub-queries**.
 
+Get yourself one.
+
+```
+$ npm install inquiry
+```
+
 ## Paths
 
 Paths are forward slash delimited. The path part begins right after the slash
