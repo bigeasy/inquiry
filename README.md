@@ -49,6 +49,12 @@ brace; `/`, `` [ ``, `{`.
 var abe = $q('/presidents/15/firstName')(object).pop();
 ```
 
+The initial slash is optional. Paths always begin at the root object.
+
+```javascript
+var abe = $q('presidents/15/firstName')(object).pop();
+```
+
 This allows you to put most things in your paths, you only need to escape the
 aforementioned terminators, a period `.` if it appears at the start of the path
 part, the asterisk `` * ``, and the percent sign `%` which I'm reserving for a
@@ -56,7 +62,7 @@ JSON pointer implementation.
 
 ```javascript
 var object = { "don't you love punctuation?": { "yes!": 1, "no": 0 } };
-var yes = $q("/don't you love punctuation?/yes!")(object).pop();
+var yes = $q("don't you love punctuation?/yes!")(object).pop();
 ```
 
 Escape using a backtick `` ` ``. We use a backtick and not a backslash, because
@@ -66,7 +72,7 @@ syndrome](http://en.wikipedia.org/wiki/Leaning_toothpick_syndrome).
 
 ```javascript
 var object = { "forward/slash": { "curly{brace": 1, "square[bracket": 2 } };
-var a = $q('/forward`/slash/curly`{brace')(object).pop();
+var a = $q('forward`/slash/curly`{brace')(object).pop();
 ```
 
 Paths can have a dot `.` for self refernece and two dots `..` to reference the
@@ -74,7 +80,7 @@ parent just like file paths. Below is a silly example. Parent paths are more
 useful in predicates and sub-queries.
 
 ```javascript
-var abe = $q('/presidents/14/../15/./firstName')(object).pop();
+var abe = $q('presidents/14/../15/./firstName')(object).pop();
 ```
 
 ## Invocation
@@ -88,7 +94,7 @@ JavaScript function.
 ```javascript
 var $q = require('inquiry');
 
-var firstNameByLastName = $q('/presidents{$.lastName = $1}/firstName');
+var firstNameByLastName = $q('presidents{$.lastName = $1}/firstName');
 
 ok(byLastName(object, 'Lincoln').pop() == 'Abraham');
 ok(firstNames(object, 'Washington').pop() == 'George');
@@ -104,7 +110,7 @@ invoke in a one liner.
 ```javascript
 var $q = require('inquiry');
 
-var abe = $q('/presidents{$.lastName == $1}/firstName')(object, 'Lincoln');
+var abe = $q('presidents{$.lastName == $1}/firstName')(object, 'Lincoln');
 ok(abe == 'Abraham');
 ```
 
@@ -152,14 +158,14 @@ Arrays are a special case. When we visit an array, if the path step is all
 digits, we simply use that path step as an index.
 
 ```javascript
-ok( $q('/presidents/15')(object).pop().lastName == 'Lincoln' );
+ok( $q('presidents/15')(object).pop().lastName == 'Lincoln' );
 ```
 
 If it is not all digits, we assume that we want to gather the property for every
 element in the array. This gathers values into the result array.
 
 ```javascript
-ok( $q('/presidents/lastName')(object)[15] == 'Lincoln' );
+ok( $q('presidents/lastName')(object)[15] == 'Lincoln' );
 ```
 
 You can, of course, invoke Inquiry against an array directly. The path will be
@@ -190,27 +196,27 @@ When a predicate expression is used with an array, it is tested against all the
 members of the array.
 
 ```javascript
-var abe = $q('/presidents{$.lastName == "Lincoln"}')(object).pop();
+var abe = $q('presidents{$.lastName == "Lincoln"}')(object).pop();
 ```
 
 A predicate expression references arguments using the special variables `$1`
 through `$256`, each variable representing an argument by position.
 
 ```javascript
-var abe = $q('/presidents{$.lastName == $1}')(object, 'Lincoln').pop();
+var abe = $q('presidents{$.lastName == $1}')(object, 'Lincoln').pop();
 ```
 
 You can negate a JavaScript predicate using an exclamation point `!`.
 
 ```javascript
-var abe = $q('/presidents!{$.lastName != "Lincoln"}')(object).pop();
+var abe = $q('presidents!{$.lastName != "Lincoln"}')(object).pop();
 ```
 
 A predicate expression can reference the index of an array using the special
 variable `$i`.
 
 ```javascript
-var abe = $q('/presidents{$i == 15}')(object).pop();
+var abe = $q('presidents{$i == 15}')(object).pop();
 ```
 
 When you invoke Inquiry directly against an array, you apply a JavaScript
@@ -252,7 +258,7 @@ var datacenter = {
     tags: []
   }]
 };
-var tagged = $q('/instances[tags/key]')(datacenter);
+var tagged = $q('instances[tags/key]')(datacenter);
 ok(tagged.length == 2);
 ```
 
@@ -263,7 +269,7 @@ matches any of the `instance` objects who's `tags` array has an object with a
 You can nest JavaScript predicates inside sub-query predicates.
 
 ```javascript
-var server = $q('/instances[tags{$.key == "name" && $.value == $1}]')(datacenter, 'server').pop();
+var server = $q('instances[tags{$.key == "name" && $.value == $1}]')(datacenter, 'server').pop();
 ```
 
 In the above, for each `instance` object we look in the `tags` array for a
@@ -280,7 +286,7 @@ array, you need to use `../..`. Use `..` to go to the other array elements and
 The following will get the tags of all instances that have a `running` property.
 
 ```javascript
-var tags = $q('/instances/tags[../../running]')(instances);
+var tags = $q('instances/tags[../../running]')(instances);
 ok(tags.length == 2);
 ```
 
@@ -298,7 +304,7 @@ was invoked.
 Here we look for any president that shares a first name with any another president.
 
 ```javascript
-var dup = $q('/presidents[..{$.firstName == $$.firstName && $i != $$i}]')(object);
+var dup = $q('presidents[..{$.firstName == $$.firstName && $i != $$i}]')(object);
 ok(dup.length == 7);
 ok(dup[dup.length - 1].firstName = 'James');
 ```
@@ -310,7 +316,7 @@ Here we look for a president that does not share a first name with any other
 president.
 
 ```javascript
-var uniq = $q('/presidents![..{$.firstName == $$.firstName && $i != $$i}]')(object);
+var uniq = $q('presidents![..{$.firstName == $$.firstName && $i != $$i}]')(object);
 ok(uniq.length == 9);
 ok(uniq[uniq.length - 1].firstName == 'Abraham');
 ```
