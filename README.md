@@ -46,6 +46,17 @@ Get yourself one.
 $ npm install inquiry
 ```
 
+## Getting Help
+
+If you have a general question or need help, [please ask
+me under the release discusssion](https://github.com/bigeasy/inquiry/issues/2),
+it's a make shift forum.
+
+If you have a bug or other issue please open a new issue.
+
+One of the goals of Inquiry is to be tiny, so let's talk before submitting pull
+requests for new features. I enjoy being able to say it is less than 1k.
+
 ## Paths
 
 Paths are forward slash delimited. The path part begins right after the slash
