@@ -31,13 +31,13 @@ console.log("Found: " hickory.firstName + " " + hickory.lastName);
 ```
 
 Inquiry is a **tiny** library that can perform **complex** searches on
-complicated **nested** collections JavaScript object graphs. 
+complicated **nested** collections JavaScript object graphs.
 
 Inquiry is a **functional** library that builds a reusable JavaScript function
 from a path expression.
 
 The path expression language supports **parameters**, **expressions**, and
-**sub-queries**. 
+**sub-queries**.
 
 ## Paths
 
@@ -207,7 +207,7 @@ var abe = $q('/presidents{$i == 15}')(presidents).pop();
 
 ## Sub-Query Predicates
 
-Square brackets define sub-query 
+Square brackets define sub-query
 [predicates](http://stackoverflow.com/questions/3230944/what-does-predicate-mean-in-the-context-of-computer-science).
 A sub-query predicate is a query that is performed in the context of each
 object that matches the path, current object or against each object in an array
@@ -241,7 +241,7 @@ ok(tagged.length == 2);
 
 In the above, for each `instance` the sub-query looks for `tags/name`. This
 matches any of the `instance` objects who's `tags` array has an object with a
-`name` property, regardless of value. 
+`name` property, regardless of value.
 
 You can nest JavaScript predicates inside sub-query predicates.
 
