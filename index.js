@@ -12,11 +12,11 @@
   function say () { console.log.apply(console, slice.call(arguments, 0)) }
 */
   function error (index) { return "invalid syntax at: " + index }
-  function parse (query, stop) {
+  function parse (query, stop, negate) {
     var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args, slash = '/';
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
-        if (/^[[{]/.test(rest[0])) {
+        if (/^[![{]/.test(rest[0])) {
           rest = '/.' + rest;
           index = -2;
         } else {
@@ -29,13 +29,14 @@
       //$ = /^(\s*)(.*)$/.exec(rest), index += $[1].length;
       // Match one or two slashes, followed by dots or a property name, plus an
       // optional predicate or subquery opener.
-      $ = /^(\/{1,2})(\.\.|\.|(?:[^[{/`]|`.)*)([{[]?)(.*)/.exec(rest);
+      $ = /^(\/{1,2})(\.\.|\.|(?:!(?![[{])|[^![{/`]|`.)*)((!?)([[{]))?(.*)/.exec(rest);
+      //$ = /^(\/{1,2})(\.\.|\.|(?:[^![{/`]|`.)*)((?:![|!{|[|{)?)(.*)/.exec(rest);
       if (!$) throw new Error(error(0));
       $[2] = decodeURIComponent($[2].replace(/`%/g, '%25')).replace(/`(.)/, "$1");
-      rest = $[4];
+      rest = $[6];
       struct = $.slice(1, 3);
       // Check for have a predicate or a sub-expression.
-      switch ($[3]) {
+      switch ($[5]) {
       // We want to consume the contents of the curly braces that define a
       // predicate to construct a function body.
       case "{":
@@ -45,7 +46,7 @@
         // document the one valid regular expression that we know of that we
         // cannot match: `/[/]/`.
         depth = 1;
-        source = '';
+        source = ($[4] || '') + '(';
         while ($ = /^(?:[^'"{}]*|'(?:[^\\']|\\.)*'|"(?:[^\\"]|\\.)*")*/.exec(rest)) {
           source += $[0];
           rest = rest.substring($[0].length);
@@ -62,7 +63,7 @@
         for (i = 0; i < depth; i++) {
           args.push('$' + (i + 1));
         }
-        args.push('return ' + source);
+        args.push('return ' +  source + ')');
         struct.push((function (predicate) {
           return function (candidate, vargs) {
             return predicate.apply(candidate.object, [ candidate.object, candidate.i ].concat(vargs));
