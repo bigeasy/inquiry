@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-require("proof")(24, function (equal, ok) {
+require("proof")(29, function (equal, ok) {
   var $q = require("../.."), object = require('./presidents'), result;
 
   var hickory = $q('/p*{$.lastName == $1}')(object, "Jackson").pop();
@@ -44,6 +44,8 @@ require("proof")(24, function (equal, ok) {
   ! function () {
     ok( $q('/presidents/15')(object).pop().lastName == 'Lincoln', 'index' );
     ok( $q('/presidents/lastName')(object)[15] == 'Lincoln', 'map' );
+    ok( $q('lastName')(object.presidents).shift() == 'Washington' );
+    ok( $q('15/lastName')(object.presidents).shift() == 'Lincoln' );
   } ()
 
   ! function () {
@@ -56,6 +58,8 @@ require("proof")(24, function (equal, ok) {
     abe = $q('/presidents!{$.lastName != "Lincoln"}')(object).pop();
     equal(abe.lastName, 'Lincoln', 'JavaScript negated');
     abe = $q('/presidents{$i == 15}')(object).pop();
+    equal(abe.lastName, 'Lincoln', 'JavaScript index');
+    abe = $q('{$i == 15}')(object.presidents).pop();
     equal(abe.lastName, 'Lincoln', 'JavaScript index');
   } ()
 
@@ -102,6 +106,12 @@ require("proof")(24, function (equal, ok) {
 
   ! function () {
     var uniq = $q('/presidents![..{$.firstName == $$.firstName && $i != $$i}]')(object);
+    ok(uniq.length == 9);
+    ok(uniq[uniq.length - 1].firstName == 'Abraham');
+  } ()
+
+  ! function () {
+    var uniq = $q('![..{$.firstName == $$.firstName && $i != $$i}]')(object.presidents);
     ok(uniq.length == 9);
     ok(uniq[uniq.length - 1].firstName == 'Abraham');
   } ()

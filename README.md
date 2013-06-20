@@ -162,6 +162,14 @@ element in the array. This gathers values into the result array.
 ok( $q('/presidents/lastName')(object)[15] == 'Lincoln' );
 ```
 
+You can, of course, invoke Inquiry against an array directly. The path will be
+applied to each element in the array.
+
+```javascript
+ok( $q('lastName')(object.presidents).shift() == 'Washington' );
+ok( $q('15/lastName')(object.presidents).shift() == 'Lincoln' );
+```
+
 ## JavaScript Predicates
 
 Curly braces indicate JavaScript
@@ -203,6 +211,13 @@ variable `$i`.
 
 ```javascript
 var abe = $q('/presidents{$i == 15}')(object).pop();
+```
+
+When you invoke Inquiry directly against an array, you apply a JavaScript
+predicate by defining it immediately.
+
+```javascript
+var abe = $q('{$i == 15}')(object.presidents).pop();
 ```
 
 ## Sub-Query Predicates
@@ -302,6 +317,15 @@ ok(uniq[uniq.length - 1].firstName == 'Abraham');
 
 If you're wondering, yes, you can nest deeper than a single sub-query; a `$$$`
 variable and a `$$$i` variable will be created.
+
+When you invoke Inquiry directly against an array, you apply a JavaScript
+predicate by defining it immediately.
+
+```javascript
+var uniq = $q('![..{$.firstName == $$.firstName && $i != $$i}]')(object.presidents);
+ok(uniq.length == 9);
+ok(uniq[uniq.length - 1].firstName == 'Abraham');
+```
 
 ## Concerns and Decisions
 
