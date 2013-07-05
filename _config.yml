@@ -1,2 +1,4 @@
 name: Inquiry
 pygments: true
+markdown: redcarpet
+baseurl: "http://bigeasy.github.io/inquiry"
