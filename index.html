@@ -1,13 +1,415 @@
----
-layout: default
-title: Your New Jekyll Site
----
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Inquiry a JSON Path Language by Alan Gutierrez</title>
+    <link href='http://fonts.googleapis.com/css?family=Anonymous+Pro' rel='stylesheet' type='text/css'>
+    <script type="text/javascript" src="http://typecast.com/project_css/RMhWX3rhLc/7869031febd0a.js"></script>
+    <meta name="viewport" content="width=device-width">
+    <!-- syntax highlighting CSS -->
+    <link rel="stylesheet" href="./css/syntax.css">
+    <!-- lightweight framework -->
+    <link rel="stylesheet" href="./css/inquiry.css">
+  </head>
+  <body class="reset">
+  <div class="band heading">
+    <div class="inner">
+    <div class="container">
+      <div class="grid">
+        <div class="unit span-grid title"><h1>Inquiry</h1></div>
+      </div>
+    </div>
+    </div>
+  </div>
+    <div class="container">
+      <div class="grid">
+      <!--
+        <div class="unit span-grid"><img class="information" alt="Information desk at Indianapolis Central Library by Phil Jern" src="open.png" width="960" height="640"></div>
+        -->
+        <div class="unit span-grid"><img class="information" alt="Information
+        desk at Indianapolis Central Library by Phil Jern" src="information.jpg" width="960" height="640"></div>
+    <!--
+        <div class="unit span-grid chicklets">
+        <a href="http://travis-ci.org/bigeasy/inquiry"><img
+        src="https://secure.travis-ci.org/bigeasy/inquiry.png?branch=master"
+        alt="Build Status" style="max-width:100%;"></a>
+        <a href="https://coveralls.io/r/bigeasy/inquiry"><img
+        src="https://coveralls.io/repos/bigeasy/inquiry/badge.png?branch=master"
+        alt="Coverage Status" style="max-width:100%;"></a>
+        <a href="http://badge.fury.io/js/inquiry"><img
+        src="https://badge.fury.io/js/inquiry.png" alt="NPM version"
+        style="max-width:100%;"></a>
+        </div>
+    -->
+      </div>
+    </div>
+    <div class="container">
+      <div class="grid">
+        <div class="unit span-grid">
+        <h2>Synopsis</h2>
+        <p>Select Andrew Jackson from the set of the first sixteen US Presidents.
+        <!-- :r ! pygmentize -f html presidents.js -->
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">$q</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s2">&quot;inquiry&quot;</span><span class="p">),</span> <span class="nx">hickory</span><span class="p">,</span> <span class="nx">object</span> <span class="o">=</span>
+  <span class="p">{</span> <span class="nx">presidents</span><span class="o">:</span>
+  <span class="p">[</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;George&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Washington&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Adams&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;Thomas&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Jefferson&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;James&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Madison&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;James&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Monroe&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Quincy Adams&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;Andrew&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Jackson&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;Martin&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Van Buren&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;William&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Henry Harrison&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;John&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Tyler&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;James&quot;</span><span class="p">,</span> <span class="nx">middleInitial</span><span class="o">:</span><span class="s2">&quot;K&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Polk&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;Zachary&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Taylor&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;Millard&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Fillmore&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;Franklin&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Pierce&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;James&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Buchanan&quot;</span> <span class="p">}</span>
+  <span class="p">,</span> <span class="p">{</span> <span class="nx">firstName</span><span class="o">:</span> <span class="s2">&quot;Abraham&quot;</span><span class="p">,</span> <span class="nx">lastName</span><span class="o">:</span><span class="s2">&quot;Lincoln&quot;</span> <span class="p">}</span>
+  <span class="p">]};</span>
 
-<div id="home">
-  <h1>Blog Posts</h1>
-  <ul class="posts">
-    {% for post in site.posts %}
-      <li><span>{{ post.date | date_to_string }}</span> &raquo; <a href="{{ post.url }}">{{ post.title }}</a></li>
-    {% endfor %}
-  </ul>
+<span class="nx">hickory</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;/p*{$.lastName == $1}&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">,</span> <span class="s2">&quot;Jackson&quot;</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+
+<span class="nx">console</span><span class="p">.</span><span class="nx">log</span><span class="p">(</span><span class="s2">&quot;Found: &quot;</span> <span class="o">+</span> <span class="nx">hickory</span><span class="p">.</span><span class="nx">firstName</span> <span class="o">+</span> <span class="s2">&quot; &quot;</span> <span class="o">+</span> <span class="nx">hickory</span><span class="p">.</span><span class="nx">lastName</span><span class="p">);</span>
+</pre></div>
+        </div>
+        <div class="unit one-of-three">
+          <h2>JSON Queries</h2>
+          <p>Inquiry is a JSON path langauge that  supports
+          <strong>parameters</strong>, JavaScript <strong>expressions</strong>,
+          and <strong>sub-queries</strong>.
+        </div>
+        <div class="unit one-of-three">
+          <h2>Pre-Compiled</h2>
+          <p>Inquiry is a <strong>functional</strong> library that compiles a
+          reusable <strong>parameterized</strong> JavaScript function from a path expression.
+        </div>
+        <div class="unit one-of-three">
+          <h2>&lt; 1K</h2>
+          <p>Inquiry is a <strong>tiny</strong> library, under 1k minified and
+          gzipped, suitable for use on the server or in the browser.
+        </div>
+        <div class="unit span-grid">
+        <h2>Contributing</h2>
+        <p>One of the goals of Inquiry is to be tiny, so let's talk before
+        submitting Pull Requests for new features. I enjoy recieving help from
+        the community, but I also enjoy being able to say that Inquiry is less
+        than 1k.
+        </div>
+        <div class="unit one-of-two">
+        <!-- TODO: Try Anonymous Pro for your code font. -->
+        <h2>Installation</h2>
+        <p>Inquiry is <code>inquiry</code> on NPM.
+        <pre>$ npm install inquiry</pre>
+        <p>Inquiry and also available from GitHub as
+        <a href="https://github.com/bigeasy/inquiry/">bigeasy/inquiry</a>.
+        </div>
+        <div class="unit one-of-two">
+        <h2>Getting Help</h2>
+        <p>If you have a general question or need help, <a
+        href="https://github.com/bigeasy/inquiry/issues/" title="Getting
+        Help">please ask me under the release discusssion</a>, it's our make
+        shift forum.
+
+        <p>If you have a bug or other issue please open a new issue.
+        </div>
+      <div class="unit span-grid">
+      <!-- code.md begin -->
+<h2 id="toc_0">Paths</h2>
+
+<p>Paths are forward slash delimited. The path part begins right after the slash
+and ends at the first unescaped forward slash, open square bracket, open curly
+brace; <code>/</code>, <code>[</code>, <code>{</code>.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;/presidents/15/firstName&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
 </div>
+
+<p>The initial slash is optional. Paths always begin at the root object.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents/15/firstName&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>This allows you to put most things in your paths, you only need to escape the
+aforementioned terminators, a period <code>.</code> if it appears at the start of the path
+part, the asterisk <code>*</code>, and the percent sign <code>%</code> which I&#39;m reserving for a
+JSON pointer implementation.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;don&#39;</span><span class="nx">t</span> <span class="nx">you</span> <span class="nx">love</span> <span class="nx">punctuation</span><span class="o">?</span><span class="s1">&#39;: { &#39;</span><span class="nx">yes</span><span class="o">!</span><span class="s1">&#39;: 1, &#39;</span><span class="nx">no</span><span class="s1">&#39;: 0 } };</span>
+<span class="s1">var yes = $q(&#39;</span><span class="nx">don</span><span class="s1">&#39;t you love punctuation?/yes!&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>Escape using a backtick <code>`</code>. We use a backtick and not a backslash, because
+then you&#39;d have to double those backslashes up in a JavaScript string, which
+would lead to <a href="http://en.wikipedia.org/wiki/Leaning_toothpick_syndrome">leaning toothpick
+syndrome</a>.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;forward/slash&#39;</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;curly{brace&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;square[bracket&#39;</span><span class="o">:</span> <span class="mi">2</span> <span class="p">}</span> <span class="p">};</span>
+<span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;forward`/slash/curly`{brace&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>Paths can have a dot <code>.</code> for self refernece and two dots <code>..</code> to reference the
+parent just like file paths. Below is a silly example. Parent paths are more
+useful in predicates and sub-queries.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents/14/../15/./firstName&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<h2 id="toc_1">Invocation</h2>
+
+<p><strong>Now that you have a notion of what a path looks like, let&#39;s talk about
+invocation.</strong></p>
+
+<p>Inquiry is a function compiler. Inquiry compiles a path expression into a
+JavaScript function.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">$q</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;inquiry&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">firstNameByLastName</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents{$.lastName = $1}/firstName&#39;</span><span class="p">);</span>
+
+<span class="nx">ok</span><span class="p">(</span><span class="nx">firstNameByLastName</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="s1">&#39;Lincoln&#39;</span><span class="p">).</span><span class="nx">pop</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Abraham&#39;</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">firstNameByLastName</span><span class="p">(</span><span class="nx">object</span><span class="p">,</span> <span class="s1">&#39;Washington&#39;</span><span class="p">).</span><span class="nx">pop</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;George&#39;</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>Inquiry is all functional like that. You can then call that JavaScript function
+however many times you&#39;d like. You can pass the function to another function as
+a parameter.</p>
+
+<p>However, the Inquiry compiler is quick enough that you can simply compile and
+invoke in a one liner.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">$q</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;inquiry&#39;</span><span class="p">);</span>
+
+<span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents{$.lastName == $1}/firstName&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">,</span> <span class="s1">&#39;Lincoln&#39;</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">abe</span> <span class="o">==</span> <span class="s1">&#39;Abraham&#39;</span><span class="p">);</span>
+</pre>
+</div>
+
+<h2 id="toc_2">One Wildcard Per Property</h2>
+
+<p>In a path, you&#39;re allowed one and only one wildcard represented by a star
+<code>*</code>.</p>
+
+<p>Wildcards help to make verbose queries terse.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">instances</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;reservationSet/reservation/instanceSet/instance&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>A few wildcards and the path is under control, but still readable.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">instances</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;r*Set/reservation/i*Set/instance&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>You&#39;re only allowed one wildcard per property name. Wildcards are used to tame
+verbosity, not for pattern matching. There is no good way to pattern match
+against property names in inquiry. You&#39;re expected to know the structure of the
+JSON you&#39;re querying.</p>
+
+<h2 id="toc_3">JSON Pointer</h2>
+
+<p>You can also <a href="http://tools.ietf.org/html/draft-pbryan-zyp-json-pointer-02">JSON
+pointer</a> which is
+simply URL encoded path parts.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;@#$%^&amp;&#39;</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;&gt;&#39;</span><span class="o">:</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;%3E&#39;</span><span class="o">:</span> <span class="mi">1</span> <span class="p">}</span> <span class="p">};</span>
+<span class="nx">equal</span><span class="p">(</span><span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;%40%23%24%25%5E%26/%3E&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">(),</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;encoded&#39;</span><span class="p">);</span>
+<span class="nx">equal</span><span class="p">(</span><span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;%40%23%24%25%5E%26/`%3E&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">(),</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;escaped encoding&#39;</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>I imagine this might be helpful if you want to add paths to URLs, but I&#39;ve not
+found a use case in the wild. If you do find, one <a href="https://github.com/bigeasy/inquiry/issues/12">drop me a
+line</a>.</p>
+
+<h2 id="toc_4">Arrays</h2>
+
+<p>Arrays are a special case. When we visit an array, if the path step is all
+digits, we simply use that path step as an index.</p>
+<div class="highlight"><pre><span class="nx">ok</span><span class="p">(</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents/15&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">().</span><span class="nx">lastName</span> <span class="o">==</span> <span class="s1">&#39;Lincoln&#39;</span> <span class="p">);</span>
+</pre>
+</div>
+
+<p>If it is not all digits, we assume that we want to gather the property for every
+element in the array. This gathers values into the result array.</p>
+<div class="highlight"><pre><span class="nx">ok</span><span class="p">(</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents/lastName&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">)[</span><span class="mi">15</span><span class="p">]</span> <span class="o">==</span> <span class="s1">&#39;Lincoln&#39;</span> <span class="p">);</span>
+</pre>
+</div>
+
+<p>You can, of course, invoke Inquiry against an array directly. The path will be
+applied to each element in the array.</p>
+<div class="highlight"><pre><span class="nx">ok</span><span class="p">(</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;lastName&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">.</span><span class="nx">presidents</span><span class="p">).</span><span class="nx">shift</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Washington&#39;</span> <span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;15/lastName&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">.</span><span class="nx">presidents</span><span class="p">).</span><span class="nx">shift</span><span class="p">()</span> <span class="o">==</span> <span class="s1">&#39;Lincoln&#39;</span> <span class="p">);</span>
+</pre>
+</div>
+
+<p>Note that we <strong>do not</strong> use brackets <code>[]</code> to indicate an array element. Brackets
+are used to define sub-query predicates.</p>
+
+<h2 id="toc_5">JavaScript Predicates</h2>
+
+<p>Curly braces indicate JavaScript
+<a href="http://stackoverflow.com/questions/3230944/what-does-predicate-mean-in-the-context-of-computer-science">predicates</a>.
+A JavaScript predicate is simply a JavaScript expression that is compiled to a
+function that returns a boolean. If the JavaScript expression that evaluates to
+<code>true</code>, the path is included in the result set.</p>
+
+<p>Each step in the path can include a single JavaScript predicate.</p>
+
+<p>A predicate expression references the current object using the varaible <code>$</code>.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;{$.lastName == &#39;</span><span class="nx">Lincoln</span><span class="s1">&#39;}&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">.</span><span class="nx">presidents</span><span class="p">[</span><span class="mi">15</span><span class="p">]).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>When a predicate expression is used with an array, it is tested against all the
+members of the array.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents{$.lastName == &#39;</span><span class="nx">Lincoln</span><span class="s1">&#39;}&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>A predicate expression references arguments using the special variables <code>$1</code>
+through <code>$256</code>, each variable representing an argument by position.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents{$.lastName == $1}&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">,</span> <span class="s1">&#39;Lincoln&#39;</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>You can negate a JavaScript predicate using an exclamation point <code>!</code>.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents!{$.lastName != &#39;</span><span class="nx">Lincoln</span><span class="s1">&#39;}&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>A predicate expression can reference the index of an array using the special
+variable <code>$i</code>.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents{$i == 15}&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>When you invoke Inquiry directly against an array, you apply a JavaScript
+predicate by defining it immediately.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;{$i == 15}&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">.</span><span class="nx">presidents</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<h2 id="toc_6">Sub-Query Predicates</h2>
+
+<p>Square brackets define sub-query
+<a href="http://stackoverflow.com/questions/3230944/what-does-predicate-mean-in-the-context-of-computer-science">predicates</a>.
+A sub-query predicate is a query that is performed in the context of each
+object that matches the path, current object or against each object in an array
+if the object that matches the path is an array. If the sub-query returns any
+objects at all, the predicate is considered true and the object matches.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">datacenter</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">instances</span><span class="o">:</span> <span class="p">[{</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="nx">running</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">tags</span><span class="o">:</span> <span class="p">[{</span>
+      <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;server&#39;</span>
+    <span class="p">},</span> <span class="p">{</span>
+      <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;arch&#39;</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;i386&#39;</span>
+    <span class="p">}]</span>
+  <span class="p">},</span> <span class="p">{</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="nx">tags</span><span class="o">:</span> <span class="p">[{</span>
+      <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;balancer&#39;</span>
+    <span class="p">},</span> <span class="p">{</span>
+      <span class="nx">key</span><span class="o">:</span> <span class="s1">&#39;arch&#39;</span><span class="p">,</span> <span class="nx">value</span><span class="o">:</span> <span class="s1">&#39;x86_64&#39;</span>
+    <span class="p">}]</span>
+  <span class="p">},</span> <span class="p">{</span>
+    <span class="nx">id</span><span class="o">:</span> <span class="mi">3</span><span class="p">,</span>
+    <span class="nx">running</span><span class="o">:</span> <span class="kc">true</span><span class="p">,</span>
+    <span class="nx">tags</span><span class="o">:</span> <span class="p">[]</span>
+  <span class="p">}]</span>
+<span class="p">};</span>
+<span class="kd">var</span> <span class="nx">tagged</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;instances[tags/key]&#39;</span><span class="p">)(</span><span class="nx">datacenter</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">tagged</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">2</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>In the above, for each <code>instance</code> the sub-query looks for <code>tags/key</code>. This
+matches any of the <code>instance</code> objects who&#39;s <code>tags</code> array has an object with a
+<code>key</code> property, regardless of value.</p>
+
+<p>You can nest JavaScript predicates inside sub-query predicates.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">server</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;instances[tags{$.key == &#39;</span><span class="nx">name</span><span class="s1">&#39; &amp;&amp; $.value == $1}]&#39;</span><span class="p">)(</span><span class="nx">datacenter</span><span class="p">,</span> <span class="s1">&#39;server&#39;</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>In the above, for each <code>instance</code> object we look in the <code>tags</code> array for a
+<code>name</code> property with the value &#39;server.&#39;</p>
+
+<p>You can use parent operator <code>..</code> to compare against a parent in a sub-query
+predicate, or multiple parent operators <code>../..</code> to compare against other
+ancestors. It&#39;s just like <code>..</code> in file paths.</p>
+
+<p><strong><em>However</em></strong>, Inquiry will dive into an array so, so to get back out of an
+array, you need to use <code>../..</code>. Use <code>..</code> to go to the other array elements and
+<code>../..</code> to go up to the object that contains the array.</p>
+
+<p>If you go up beyond the root, bad things happen. Don&#39;t do it.</p>
+
+<p>The following will get the tags of all instances that have a <code>running</code> property.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">tags</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;instances/tags[../../running]&#39;</span><span class="p">)(</span><span class="nx">instances</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">tags</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">2</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>Granted, the above is not terribly useful since it returns the tags, but not the
+instance itself, so the tags have no context. Really useful queries of parents
+and siblings require capturing the properties of the object at the current
+path with the properties of a parent or sibling.</p>
+
+<p>A sub-query predicate can reference the context of query that invoked it using
+the variable <code>$$</code>. This variable references the context object of the outer
+query at when the sub-query predicate was invoked. The variable <code>$$i</code> contains
+the index of the context object of the outer query when the sub-query predicate
+was invoked.</p>
+
+<p>Here we look for any president that shares a first name with any another president.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">dup</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents[..{$.firstName == $$.firstName &amp;&amp; $i != $$i}]&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">dup</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">7</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">dup</span><span class="p">[</span><span class="nx">dup</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="nx">firstName</span> <span class="o">=</span> <span class="s1">&#39;James&#39;</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>We compared the first name of the outer president with the first names of all the other
+presidents, excluding the outer president himself by his index.</p>
+
+<p>Here we look for a president that does not share a first name with any other
+president.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">uniq</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents![..{$.firstName == $$.firstName &amp;&amp; $i != $$i}]&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">uniq</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">9</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">uniq</span><span class="p">[</span><span class="nx">uniq</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="nx">firstName</span> <span class="o">==</span> <span class="s1">&#39;Abraham&#39;</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>If you&#39;re wondering, yes, you can nest deeper than a single sub-query; a <code>$$$</code>
+variable and a <code>$$$i</code> variable will be created.</p>
+
+<p>When you invoke Inquiry directly against an array, you apply a JavaScript
+predicate by defining it immediately.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">uniq</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;![..{$.firstName == $$.firstName &amp;&amp; $i != $$i}]&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">.</span><span class="nx">presidents</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">uniq</span><span class="p">.</span><span class="nx">length</span> <span class="o">==</span> <span class="mi">9</span><span class="p">);</span>
+<span class="nx">ok</span><span class="p">(</span><span class="nx">uniq</span><span class="p">[</span><span class="nx">uniq</span><span class="p">.</span><span class="nx">length</span> <span class="o">-</span> <span class="mi">1</span><span class="p">].</span><span class="nx">firstName</span> <span class="o">==</span> <span class="s1">&#39;Abraham&#39;</span><span class="p">);</span>
+</pre>
+</div>
+
+<h2 id="toc_7">Errors</h2>
+
+<p>Inquiry is a minimal path language for maximum effect. Error reporting is
+minimal, too. If you give it a bad pattern, it will raise an exception, but it
+doesn&#39;t offer much in the way of suggestions to fix the pattern. Diagnostics of
+that sort would be expensive.</p>
+
+<p>Most of your patterns will be simple and obvious, so you&#39;re not going to want to
+pay for the complexity of details diagnostics. If you&#39;re having trouble with a
+complicated pattern, try building it incrementally, adding the bits and pieces
+to the pattern so you&#39;ll see when it breaks.</p>
+      <!-- :r ! ruby markup.rb < code.md -->
+      <!-- code.md end -->
+      <!--
+        <div class="unit span-grid"><img alt="Information desk at Indianapolis
+        Central Library by Phil Jern" src="stacks.jpg" width="960" height="640"></div>
+        -->
+        </div>
+      </div>
+    </div>
+  </body>
+</html>
