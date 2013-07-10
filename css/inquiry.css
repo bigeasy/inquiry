@@ -157,8 +157,15 @@ body.reset .band.heading .inner {
   background: #FFFBF2;
   border-bottom: 6px solid #D48656;
 }
+body.reset p {
+  line-height: 1.75em;
+}
 body.reset p a {
   color: #c66741;
+  text-decoration: none;
+}
+body.reset p a:hover {
+  text-decoration: underline;
 }
 body.reset p a:visited {
   color: #5f6df2;
@@ -196,5 +203,6 @@ body.reset code {
   background: #fffff8;
   padding: 0.25em;
   font-family: "Anonymous Pro";
+  font-size: 14pt;
   border: 1px solid #ccc;
 }
