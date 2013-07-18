@@ -3,18 +3,18 @@
   else if (typeof define == "function") define(definition);
   else module.exports = definition();
 } (function () {
-  function parse (rest, nesting, stop) {
-    var expression = [], slash = '/', args, struct, source, i, $;
-    rest = rest.trim()
+  function parse (rest, fixup, nesting, stop) {
+    var expression = [], /*slash = '/',*/ args, struct, source, i, $;
+    rest = fixup(rest.trim())
     while (rest && rest[0] != stop) {
-      if (rest[0] != '/') {
+      /*if (rest[0] != '/') {*/
         if (/^[![{]/.test(rest[0])) {
           rest = '/.' + rest;
-        } else {
+        } /*else {
           rest = slash + rest;
-        }
-      }
-      slash = '';
+        }*/
+/*      }
+      slash = ''; */
       $ = /^\/((?:!(?![[{])|[^\]![{/`"]|"(?:[^\\"]|\\.)*")*)((!?)([[{]))?(.*)/.exec(rest);
       if (!$) throw new Error("bad pattern");
       //struct = [ /^['"]/.test($[1].trim()) ? $[1].trim().replace(/^(['"])(.*)\1$/g, "$2").replace(/\\(.)/g, "$1") : decodeURIComponent($[1].trim()) ]
@@ -35,7 +35,7 @@
         if (!$) throw new Error("bad pattern");
         source += $[2];
         rest = rest.substring($[1].length);
-        args = [];
+        args = ['_'];
         for (i = 0; i < nesting; i++) {
           args.push(Array(i + 2).join('$'), Array(i + 2).join('$') + 'i');
         }
@@ -47,7 +47,7 @@
         args.push('return ' +  source + ')');
         struct.push((function (predicate) {
           return function (candidate, vargs) {
-            return predicate.apply(candidate.o, [ candidate.o, candidate.i ].concat(vargs));
+            return predicate.apply(candidate.o, [ candidate._, candidate.o, candidate.i ].concat(vargs));
           }
         })(Function.apply(Function, args)), []);
         break;
@@ -60,54 +60,51 @@
               candidate, [ candidate.o, candidate.i ].concat(args)).length
             return negate ? ! length : length;
           }
-        })($[3] == '!', ($ = parse(rest, nesting + 1, "]"))[0]));
+        })($[3] == '!', ($ = parse(rest, fixup, nesting + 1, "]"))[0]));
         rest = $[1].slice(1);
         break;
       default:
         struct.push(null);
       }
       expression.push(struct);
-      rest = rest.trim()
+      rest = fixup(rest.trim())
     }
     return [ function (candidate, vargs) {
       var candidates = [], stack = [ candidate ],
-          star, nameOrPredicate, i, j, I, path, object;
+          star,  i, j, I, path, object, _;
       // todo: we might be able to get: div/p/3 (third paragraph)
       // todo: we might be able to get: .{ $.tag == 'div' }/.{ $.tag == 'p' }/3 (third paragraph)
       for (i = 0, I = expression.length; i < I; i++) {
-        nameOrPredicate = expression[i][0];
         while (stack.length) {
-          candidate = stack.shift(), object = candidate.o, path = candidate.p;
-          if (nameOrPredicate in object) {
-            candidates.push({ o: object[nameOrPredicate], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
-          } else if (nameOrPredicate == '.') {
+          candidate = stack.shift(), object = candidate.o, path = candidate.p, _ = candidate._;
+          if (object[expression[i][0]] != null) {
+            candidates.push({ o: object[expression[i][0]], _: [ expression[i][0] ].concat(_), p: [ object ].concat(path) });
+          } else if (expression[i][0] == '.') {
             candidates.push(candidate);
-          } else if (nameOrPredicate == '..') {
+          } else if (expression[i][0] == '..') {
             path = path.slice();
-            candidates.unshift({ o: path.shift(), p: path, i: 0 });
+            candidates.unshift({ o: path.shift(), _: _.slice(1), p: path, i: 0 });
           } else if (Array.isArray(object)) {
             for (j = object.length - 1; j > -1; --j) {
-              stack.unshift({ o: object[j], p: [ object ].concat(path) });
+              stack.unshift({ o: object[j], _: [ j, expression[i][0] ].concat(_), p: [ object ].concat(path) });
             }
-          } else if (~(star = nameOrPredicate.indexOf('*'))) {
+          } else if (~(star = expression[i][0].indexOf('*'))) {
             for (j in object) {
-              if (j.indexOf(nameOrPredicate.substring(0, star)) == 0
-                  && j.lastIndexOf(nameOrPredicate.substring(star + 1) == j.length - (nameOrPredicate.length - star))) {
-                candidates.push({ o: object[j], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
-                break;
+              if (j.indexOf(expression[i][0].substring(0, star)) == 0
+                  && j.lastIndexOf(expression[i][0].substring(star + 1) == j.length - (expression[i][0].length - star))) {
+                candidates.push({ o: object[j], _: [ j ].concat(_), p: [ object ].concat(path) });
               }
             }
           }
         }
-        nameOrPredicate = expression[i][1];
-        if (nameOrPredicate) {
+        if (expression[i][1]) {
           while (candidates.length) {
             candidate = candidates.shift(), object = candidate.o;
             if (Array.isArray(object)) {
               for (j = object.length - 1; j > -1; --j) {
-                candidates.unshift({ o: object[j], p: [ object ].concat(path), i: j });
+                candidates.unshift({ o: object[j], _: [ j, expression[i][0] ].concat(_), p: [ object ].concat(path), i: j });
               }
-            } else if (nameOrPredicate(candidate, vargs)) {
+            } else if (expression[i][1](candidate, vargs)) {
               stack.push(candidate);
             }
           }
@@ -119,8 +116,8 @@
       return stack;
     }, rest ];
   }
-  return function (query) {
-    var func = parse(query, 1)[0];
-    return function (object) { return func({ o: object, p: [], i: 0 }, [].slice.call(arguments, 1)) };
+  return function (query, fixup) {
+    var func = parse(query, fixup || String, 1)[0];
+    return function (object) { return func({ o: object, _: [], p: [], i: 0 }, [].slice.call(arguments, 1)) };
   }
 });
