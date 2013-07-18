@@ -11,7 +11,7 @@
   function say () { console.log.apply(console, slice.call(arguments, 0)) }
 */
   function parse (rest, nesting, stop) {
-    var expression = [], args = [], slash = '/', depth = 0, struct, source, i, $;
+    var expression = [], args = [], slash = '/', struct, source, i, $;
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
@@ -45,15 +45,13 @@
         if (!$) throw new Error("bad pattern");
         source += $[2];
         rest = rest.substring($[1].length);
-        depth = 0;
-        source.replace(/\$(\d+)/g, function ($, number) {
-          depth = Math.max(depth, +number);
-        });
         args.length = 0;
         for (i = 0; i < nesting; i++) {
           args.push(Array(i + 2).join('$'), Array(i + 2).join('$') + 'i');
         }
-        for (i = 0; i < depth; i++) {
+        $ = 0; // evil reuse of `$` to count airty. for the bytes, always for the bytes
+        source.replace(/\$(\d+)/g, function (_, number) { $ = Math.max($, +number) });
+        for (i = 0; i < $; i++) {
           args.push('$' + (i + 1));
         }
         args.push('return ' +  source + ')');
