@@ -40,7 +40,6 @@
         // **TODO**: Test against regular expressions. We are going to have to
         // document the one valid regular expression that we know of that we
         // cannot match: `/[/]/`.
-        depth = 1;
         source = $[3] + '(';
         $ = /^(((?:[^'"}]*|'(?:[^\\']|\\.)*'|"(?:[^\\"]|\\.)*")*)})/.exec(rest);
         if (!$) throw new Error("bad pattern");
