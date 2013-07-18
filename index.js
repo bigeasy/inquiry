@@ -3,13 +3,6 @@
   else if (typeof define == "function") define(definition);
   else module.exports = definition();
 } (function () {
-/*
-  function die () {
-    console.log.apply(console, slice.call(arguments, 0));
-    process.exit(1);
-  }
-  function say () { console.log.apply(console, slice.call(arguments, 0)) }
-*/
   function parse (rest, nesting, stop) {
     var expression = [], args = [], slash = '/', struct, source, i, $;
     while (rest && rest[0] != stop) {
