@@ -114,7 +114,7 @@
           stack.unshift.apply(stack, candidates.splice(0));
         }
       }
-      for (i = stack.length - 1; i > -1; i--) stack[i] = stack[i].o;
+      for (j = stack.length - 1; j > -1; --j) stack[i] = stack[i].o;
       return stack;
     }, rest ];
   }
