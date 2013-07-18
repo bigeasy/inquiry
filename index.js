@@ -73,7 +73,7 @@
     }
     return [ function (candidate, vargs) {
       var candidates = [], stack = [ candidate ],
-          star, nameOrPredicate, i, j, I, path, object, params;
+          star, nameOrPredicate, i, j, I, path, object;
       for (i = 0, I = expression.length; i < I; i++) {
         nameOrPredicate = expression[i][0];
         while (stack.length) {
