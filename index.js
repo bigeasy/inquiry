@@ -83,8 +83,8 @@
           } else if (nameOrPredicate == '.') {
             candidates.push(candidate);
           } else if (nameOrPredicate == '..') {
-            var subpath = path.slice();
-            candidates.unshift({ o: subpath.shift(), p: subpath, i: 0 });
+            path = path.slice();
+            candidates.unshift({ o: path.shift(), p: path, i: 0 });
           } else if (Array.isArray(object)) {
             for (j = object.length - 1; j > -1; --j) {
               stack.unshift({ o: object[j], p: [ object ].concat(path) });
