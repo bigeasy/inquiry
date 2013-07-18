@@ -10,8 +10,8 @@
   }
   function say () { console.log.apply(console, slice.call(arguments, 0)) }
 */
-  function parse (query, nesting, stop) {
-    var expression = [], args = [], rest = query, slash = '/', depth = 0, struct, source, i, I, $;
+  function parse (rest, nesting, stop) {
+    var expression = [], args = [], slash = '/', depth = 0, struct, source, i, I, $;
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
