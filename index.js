@@ -4,7 +4,7 @@
   else module.exports = definition();
 } (function () {
   function parse (rest, nesting, stop) {
-    var expression = [], args = [], slash = '/', struct, source, i, $;
+    var expression = [], slash = '/', args, struct, source, i, $;
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
@@ -38,7 +38,7 @@
         if (!$) throw new Error("bad pattern");
         source += $[2];
         rest = rest.substring($[1].length);
-        args.length = 0;
+        args = [];
         for (i = 0; i < nesting; i++) {
           args.push(Array(i + 2).join('$'), Array(i + 2).join('$') + 'i');
         }
