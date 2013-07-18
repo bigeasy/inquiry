@@ -50,7 +50,7 @@
         args.push('return ' +  source + ')');
         struct.push((function (predicate) {
           return function (candidate, vargs) {
-            return predicate.apply(candidate.object, [ candidate.object, candidate.i ].concat(vargs));
+            return predicate.apply(candidate.o, [ candidate.o, candidate.i ].concat(vargs));
           }
         })(Function.apply(Function, args)), []);
         break;
@@ -59,8 +59,8 @@
       case "[":
         struct.push((function (negate, subquery) {
           return function (candidate, args) {
-            var length = subquery.call(candidate.object,
-              candidate, [ candidate.object, candidate.i ].concat(args)).length
+            var length = subquery.call(candidate.o,
+              candidate, [ candidate.o, candidate.i ].concat(args)).length
             return negate ? ! length : length;
           }
         })($[3] == '!', ($ = parse(rest, nesting + 1, "]"))[0]));
@@ -77,23 +77,23 @@
       for (i = 0, I = expression.length; i < I; i++) {
         name = expression[i][0], predicate = expression[i][1];
         while (stack.length) {
-          candidate = stack.shift(), object = candidate.object, path = candidate.path;
+          candidate = stack.shift(), object = candidate.o, path = candidate.p;
           if (name in object) {
-            candidates.push({ object: object[name], path: Array.isArray(path[0]) ? path : [ object ].concat(path) });
+            candidates.push({ o: object[name], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
           } else if (name == '.') {
             candidates.push(candidate);
           } else if (name == '..') {
             var subpath = path.slice();
-            candidates.unshift({ object: subpath.shift(), path: subpath, i: 0 });
+            candidates.unshift({ o: subpath.shift(), p: subpath, i: 0 });
           } else if (Array.isArray(object)) {
             for (j = object.length - 1; j > -1; --j) {
-              stack.unshift({ object: object[j], path: [ object ].concat(path) });
+              stack.unshift({ o: object[j], p: [ object ].concat(path) });
             }
           } else if (~(star = name.indexOf('*'))) {
             for (key in object) {
               if (key.indexOf(name.substring(0, star)) == 0
                   && key.lastIndexOf(name.substring(star + 1) == key.length - (name.length - star))) {
-                candidates.push({ object: object[key], path: Array.isArray(path[0]) ? path : [ object ].concat(path) });
+                candidates.push({ o: object[key], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
                 break;
               }
             }
@@ -101,10 +101,10 @@
         }
         if (predicate) {
           while (candidates.length) {
-            candidate = candidates.shift(), object = candidate.object;
+            candidate = candidates.shift(), object = candidate.o;
             if (Array.isArray(object)) {
               for (j = object.length - 1; j > -1; --j) {
-                candidates.unshift({ object: object[j], path: [ object ].concat(path), i: j });
+                candidates.unshift({ o: object[j], p: [ object ].concat(path), i: j });
               }
             } else if (predicate(candidate, vargs)) {
               stack.push(candidate);
@@ -114,12 +114,12 @@
           stack.unshift.apply(stack, candidates.splice(0));
         }
       }
-      for (i = stack.length - 1; i > -1; i--) stack[i] = stack[i].object;
+      for (i = stack.length - 1; i > -1; i--) stack[i] = stack[i].o;
       return stack;
     }, rest ];
   }
   return function (query) {
     var func = parse(query, 1)[0];
-    return function (object) { return func({ object: object, path: [], i: 0 }, [].slice.call(arguments, 1)) };
+    return function (object) { return func({ o: object, p: [], i: 0 }, [].slice.call(arguments, 1)) };
   }
 });
