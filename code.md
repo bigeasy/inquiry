@@ -14,33 +14,68 @@ The initial slash is optional. Paths always begin at the root object.
 var abe = $q('presidents/15/firstName')(object).pop();
 ```
 
-This allows you to put most things in your paths, you only need to escape the
-aforementioned terminators, a period `.` if it appears at the start of the path
-part, the asterisk `` * ``, and the percent sign `%` which I'm reserving for a
-JSON pointer implementation.
-
-```javascript
-var object = { 'don't you love punctuation?': { 'yes!': 1, 'no': 0 } };
-var yes = $q('don't you love punctuation?/yes!')(object).pop();
-```
-
-Escape using a backtick `` ` ``. We use a backtick and not a backslash, because
-then you'd have to double those backslashes up in a JavaScript string, which
-would lead to [leaning toothpick
-syndrome](http://en.wikipedia.org/wiki/Leaning_toothpick_syndrome).
-
-```javascript
-var object = { 'forward/slash': { 'curly{brace': 1, 'square[bracket': 2 } };
-var a = $q('forward`/slash/curly`{brace')(object).pop();
-```
-
-Paths can have a dot `.` for self refernece and two dots `..` to reference the
+Paths can have a dot `.` for self reference and two dots `..` to reference the
 parent just like file paths. Below is a silly example. Parent paths are more
 useful in predicates and sub-queries.
 
 ```javascript
 var abe = $q('presidents/14/../15/./firstName')(object).pop();
 ```
+
+When we want to use special characters in our path name, we use a JSON string
+literal. A JSON string is a double-quoted JavaScript string literal, but only
+double quoted, not single-quoted.
+
+```javascript
+var object = { 'forward/slash': { '..': 1, 'square[bracket': 2 } };
+var a = $q('"forward/slash"/".."')(object).pop();
+```
+
+This allows you to put most things in your paths.
+
+```javascript
+var object = { "don't you love punctuation?": { 'yes!': 1, 'no': 0 } };
+var yes = $q("don't you love punctuation?/yes!")(object).pop();
+```
+
+You can use whitespace to make your paths more legible, including tabs and new
+lines. If you have an unwieldy pattern you can break it up into separate lines.
+
+```javascript
+var abe = $q('                        \
+    presidents / 15 / firstName       \
+')(object).pop();
+```
+
+If the leading and trailing whitespace is part of the path name, use quotes.
+
+```javascript
+var object = { ' a ': { 'b': 1 } };
+equal($q(' " a " / b ')(object).pop(), 1);
+```
+
+If you have new lines or tabs in your path name, use quotes.
+
+```javascript
+var object = { '\na\n': { 'b': 1 } };
+equal($q(' "\\na\\n" / b ')(object).pop(), 1);
+```
+
+Use quotes around a path name with a slash `/`, an asterisk `` * `` or if it,
+the percent sign `%` which is used for JSON pointer, if it is `.` or `..`
+entirely, if leading or trailing whitespace is significant,  or if it already
+looks like a JSON string.
+
+If you're dynamically generating paths, just use `JSON.stringify` and you'll
+be safe.
+
+```javascript
+var object = { '"a"': { 'b': 1 } };
+equal($q(' ' + JSON.stringify('"a"') + ' / b ')(object).pop(), 1);
+```
+
+Keep in mind though, that Inquiry is supposed to read through well-organized
+object trees. It's a shorthand path language, not a query language.
 
 ## Invocation
 

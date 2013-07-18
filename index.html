@@ -118,6 +118,7 @@
         </div>
       <div class="unit span-grid">
       <!-- code.md begin -->
+      <!-- :r ! ruby markup.rb < code.md -->
 <h2 id="toc_0">Paths</h2>
 
 <p>Paths are forward slash delimited. The path part begins right after the slash
@@ -132,30 +133,61 @@ brace; <code>/</code>, <code>[</code>, <code>{</code>.</p>
 </pre>
 </div>
 
-<p>This allows you to put most things in your paths, you only need to escape the
-aforementioned terminators, a period <code>.</code> if it appears at the start of the path
-part, the asterisk <code>*</code>, and the percent sign <code>%</code> which I&#39;m reserving for a
-JSON pointer implementation.</p>
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;don&#39;</span><span class="nx">t</span> <span class="nx">you</span> <span class="nx">love</span> <span class="nx">punctuation</span><span class="o">?</span><span class="s1">&#39;: { &#39;</span><span class="nx">yes</span><span class="o">!</span><span class="s1">&#39;: 1, &#39;</span><span class="nx">no</span><span class="s1">&#39;: 0 } };</span>
-<span class="s1">var yes = $q(&#39;</span><span class="nx">don</span><span class="s1">&#39;t you love punctuation?/yes!&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
-</pre>
-</div>
-
-<p>Escape using a backtick <code>`</code>. We use a backtick and not a backslash, because
-then you&#39;d have to double those backslashes up in a JavaScript string, which
-would lead to <a href="http://en.wikipedia.org/wiki/Leaning_toothpick_syndrome">leaning toothpick
-syndrome</a>.</p>
-<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;forward/slash&#39;</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;curly{brace&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;square[bracket&#39;</span><span class="o">:</span> <span class="mi">2</span> <span class="p">}</span> <span class="p">};</span>
-<span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;forward`/slash/curly`{brace&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
-</pre>
-</div>
-
-<p>Paths can have a dot <code>.</code> for self refernece and two dots <code>..</code> to reference the
+<p>Paths can have a dot <code>.</code> for self reference and two dots <code>..</code> to reference the
 parent just like file paths. Below is a silly example. Parent paths are more
 useful in predicates and sub-queries.</p>
 <div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;presidents/14/../15/./firstName&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
 </pre>
 </div>
+
+<p>When we want to use special characters in our path name, we use a JSON string
+literal. A JSON string is a double-quoted JavaScript string literal, but only
+double quoted, not single-quoted.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;forward/slash&#39;</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;..&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;square[bracket&#39;</span><span class="o">:</span> <span class="mi">2</span> <span class="p">}</span> <span class="p">};</span>
+<span class="kd">var</span> <span class="nx">a</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;&quot;forward/slash&quot;/&quot;..&quot;&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>This allows you to put most things in your paths.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s2">&quot;don&#39;t you love punctuation?&quot;</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;yes!&#39;</span><span class="o">:</span> <span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;no&#39;</span><span class="o">:</span> <span class="mi">0</span> <span class="p">}</span> <span class="p">};</span>
+<span class="kd">var</span> <span class="nx">yes</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s2">&quot;don&#39;t you love punctuation?/yes!&quot;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>You can use whitespace to make your paths more legible, including tabs and new
+lines. If you have an unwieldy pattern you can break it up into separate lines.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">abe</span> <span class="o">=</span> <span class="nx">$q</span><span class="p">(</span><span class="s1">&#39;                        \</span>
+<span class="s1">    presidents / 15 / firstName       \</span>
+<span class="s1">&#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">();</span>
+</pre>
+</div>
+
+<p>If the leading and trailing whitespace is part of the path name, use quotes.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39; a &#39;</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;b&#39;</span><span class="o">:</span> <span class="mi">1</span> <span class="p">}</span> <span class="p">};</span>
+<span class="nx">equal</span><span class="p">(</span><span class="nx">$q</span><span class="p">(</span><span class="s1">&#39; &quot; a &quot; / b &#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">(),</span> <span class="mi">1</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>If you have new lines or tabs in your path name, use quotes.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;\na\n&#39;</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;b&#39;</span><span class="o">:</span> <span class="mi">1</span> <span class="p">}</span> <span class="p">};</span>
+<span class="nx">equal</span><span class="p">(</span><span class="nx">$q</span><span class="p">(</span><span class="s1">&#39; &quot;\\na\\n&quot; / b &#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">(),</span> <span class="mi">1</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>Use quotes around a path name with a slash <code>/</code>, an asterisk <code>*</code> or if it,
+the percent sign <code>%</code> which is used for JSON pointer, if it is <code>.</code> or <code>..</code>
+entirely, if leading or trailing whitespace is significant,  or if it already
+looks like a JSON string.</p>
+
+<p>If you&#39;re dynamically generating paths, just use <code>JSON.stringify</code> and you&#39;ll
+be safe.</p>
+<div class="highlight"><pre><span class="kd">var</span> <span class="nx">object</span> <span class="o">=</span> <span class="p">{</span> <span class="s1">&#39;&quot;a&quot;&#39;</span><span class="o">:</span> <span class="p">{</span> <span class="s1">&#39;b&#39;</span><span class="o">:</span> <span class="mi">1</span> <span class="p">}</span> <span class="p">};</span>
+<span class="nx">equal</span><span class="p">(</span><span class="nx">$q</span><span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">+</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="s1">&#39;&quot;a&quot;&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39; / b &#39;</span><span class="p">)(</span><span class="nx">object</span><span class="p">).</span><span class="nx">pop</span><span class="p">(),</span> <span class="mi">1</span><span class="p">);</span>
+</pre>
+</div>
+
+<p>Keep in mind though, that Inquiry is supposed to read through well-organized
+object trees. It&#39;s a shorthand path language, not a query language.</p>
 
 <h2 id="toc_1">Invocation</h2>
 
@@ -403,7 +435,6 @@ that sort would be expensive.</p>
 pay for the complexity of details diagnostics. If you&#39;re having trouble with a
 complicated pattern, try building it incrementally, adding the bits and pieces
 to the pattern so you&#39;ll see when it breaks.</p>
-      <!-- :r ! ruby markup.rb < code.md -->
       <!-- code.md end -->
       <!--
         <div class="unit span-grid"><img alt="Information desk at Indianapolis
