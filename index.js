@@ -73,40 +73,41 @@
     }
     return [ function (candidate, vargs) {
       var candidates = [], stack = [ candidate ],
-          star, name, i, j, I, predicate, path, object, params;
+          star, nameOrPredicate, i, j, I, path, object, params;
       for (i = 0, I = expression.length; i < I; i++) {
-        name = expression[i][0], predicate = expression[i][1];
+        nameOrPredicate = expression[i][0];
         while (stack.length) {
           candidate = stack.shift(), object = candidate.o, path = candidate.p;
-          if (name in object) {
-            candidates.push({ o: object[name], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
-          } else if (name == '.') {
+          if (nameOrPredicate in object) {
+            candidates.push({ o: object[nameOrPredicate], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
+          } else if (nameOrPredicate == '.') {
             candidates.push(candidate);
-          } else if (name == '..') {
+          } else if (nameOrPredicate == '..') {
             var subpath = path.slice();
             candidates.unshift({ o: subpath.shift(), p: subpath, i: 0 });
           } else if (Array.isArray(object)) {
             for (j = object.length - 1; j > -1; --j) {
               stack.unshift({ o: object[j], p: [ object ].concat(path) });
             }
-          } else if (~(star = name.indexOf('*'))) {
+          } else if (~(star = nameOrPredicate.indexOf('*'))) {
             for (j in object) {
-              if (j.indexOf(name.substring(0, star)) == 0
-                  && j.lastIndexOf(name.substring(star + 1) == j.length - (name.length - star))) {
+              if (j.indexOf(nameOrPredicate.substring(0, star)) == 0
+                  && j.lastIndexOf(nameOrPredicate.substring(star + 1) == j.length - (nameOrPredicate.length - star))) {
                 candidates.push({ o: object[j], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
                 break;
               }
             }
           }
         }
-        if (predicate) {
+        nameOrPredicate = expression[i][1];
+        if (nameOrPredicate) {
           while (candidates.length) {
             candidate = candidates.shift(), object = candidate.o;
             if (Array.isArray(object)) {
               for (j = object.length - 1; j > -1; --j) {
                 candidates.unshift({ o: object[j], p: [ object ].concat(path), i: j });
               }
-            } else if (predicate(candidate, vargs)) {
+            } else if (nameOrPredicate(candidate, vargs)) {
               stack.push(candidate);
             }
           }
