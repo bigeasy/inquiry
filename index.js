@@ -5,6 +5,7 @@
 } (function () {
   function parse (rest, nesting, stop) {
     var expression = [], slash = '/', args, struct, source, i, $;
+    rest = rest.trim()
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
@@ -14,14 +15,10 @@
         }
       }
       slash = '';
-      // Skip leading whitespaces.
-      //$ = /^(\s*)(.*)$/.exec(rest), index += $[1].length;
-      // Match one or two slashes, followed by dots or a property name, plus an
-      // optional predicate or subquery opener.
-      $ = /^\/(\.\.|\.|(?:!(?![[{])|[^\]![{/`]|`.)*)((!?)([[{]))?(.*)/.exec(rest);
-      //$ = /^(\/{1,2})(\.\.|\.|(?:[^![{/`]|`.)*)((?:![|!{|[|{)?)(.*)/.exec(rest);
+      $ = /^\/((?:!(?![[{])|[^\]![{/`"]|"(?:[^\\"]|\\.)*")*)((!?)([[{]))?(.*)/.exec(rest);
       if (!$) throw new Error("bad pattern");
-      struct = [ decodeURIComponent($[1].replace(/`%/g, '%25')).replace(/`(.)/g, "$1") ]
+      //struct = [ /^['"]/.test($[1].trim()) ? $[1].trim().replace(/^(['"])(.*)\1$/g, "$2").replace(/\\(.)/g, "$1") : decodeURIComponent($[1].trim()) ]
+      struct = [ /^"/.exec($[1].trim()) ? JSON.parse($[1].trim()) : decodeURIComponent($[1].trim()) ]
       rest = $[5];
       // Check for have a predicate or a sub-expression.
       switch ($[4]) {
@@ -70,10 +67,13 @@
         struct.push(null);
       }
       expression.push(struct);
+      rest = rest.trim()
     }
     return [ function (candidate, vargs) {
       var candidates = [], stack = [ candidate ],
           star, nameOrPredicate, i, j, I, path, object;
+      // todo: we might be able to get: div/p/3 (third paragraph)
+      // todo: we might be able to get: .{ $.tag == 'div' }/.{ $.tag == 'p' }/3 (third paragraph)
       for (i = 0, I = expression.length; i < I; i++) {
         nameOrPredicate = expression[i][0];
         while (stack.length) {

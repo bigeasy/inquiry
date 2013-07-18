@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-require("proof")(30, function (equal, ok) {
+require("proof")(34, function (equal, ok) {
   var $q = require("../.."), object = require('./presidents'), result;
 
   var hickory = $q('/p*{$.lastName == $1}')(object, "Jackson").pop();
@@ -11,20 +11,42 @@ require("proof")(30, function (equal, ok) {
   equal(abe, 'Abraham', 'paths');
 
   ! function () {
-    var object = { "don't you love punctuation?": { "yes!": 1, "no": 0 } };
-    var yes = $q("/don't you love punctuation?/yes!")(object).pop();
-    equal(yes, 1, 'punctuation');
+    var abe = $q('presidents/14/../15/./firstName')(object).pop();
+    equal(abe, 'Abraham', 'self and parent');
   } ()
 
   ! function () {
     var object = { "forward/slash": { "curly{brace": 1, "square[bracket": 2 } };
-    var a = $q('forward`/slash/curly`{brace')(object).pop();
+    var a = $q('"forward/slash"/"curly{brace"')(object).pop();
     equal(a, 1, 'escape');
   } ()
 
   ! function () {
-    var abe = $q('presidents/14/../15/./firstName')(object).pop();
-    equal(abe, 'Abraham', 'self and parent');
+    var object = { "don't you love punctuation?": { 'yes!': 1, 'no': 0 } };
+    var yes = $q("don't you love punctuation?/yes!")(object).pop();
+    equal(yes, 1, 'punctuation');
+  } ()
+
+  ! function () {
+    var abe = $q('                        \
+        presidents / 15 / firstName       \
+    ')(object).pop();
+    ok(abe == 'Abraham', 'clarity')
+  } ()
+
+  ! function () {
+    var object = { ' a ': { 'b': 1 } };
+    equal($q(' " a " / b ')(object).pop(), 1, 'quote space');
+  } ()
+
+  ! function () {
+    var object = { '\na\n': { 'b': 1 } };
+    equal($q(' "\\na\\n" / b ')(object).pop(), 1, 'quote new lines');
+  } ()
+
+  ! function () {
+    var object = { '"a"': { 'b': 1 } };
+    equal($q(' ' + JSON.stringify('"a"') + ' / b ')(object).pop(), 1, 'JSON.stringify part');
   } ()
 
   ! function () {
@@ -40,7 +62,7 @@ require("proof")(30, function (equal, ok) {
   ! function () {
     var object = { "@#$%^&": { ">": 0, "%3E": 1 } };
     equal($q("%40%23%24%25%5E%26/%3E")(object).pop(), 0, 'encoded');
-    equal($q("%40%23%24%25%5E%26/`%3E")(object).pop(), 1, 'escaped encoding');
+    equal($q("%40%23%24%25%5E%26/%253E")(object).pop(), 1, 'escaped encoding');
   } ()
 
   ! function () {

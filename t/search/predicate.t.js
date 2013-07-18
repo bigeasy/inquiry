@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 var inquiry = require("../..");
-require("proof")(9, function (equal) {
+require("proof")(11, function (equal) {
   var object, result;
   object = { firstName: "Abraham", lastName: "Lincoln" };
   equal(inquiry("{$.firstName == 'Abraham'}")(object).pop().lastName, 'Lincoln', 'rooted');
@@ -18,4 +18,8 @@ require("proof")(9, function (equal) {
     equal(lastName, 'Lincoln', 'called');
     return true;
   }).pop().lastName, 'Lincoln', 'multiple predicates');
+  equal(inquiry("/ presidents { $.firstName == 'Abraham' } { $1($.lastName) }")(object, function (lastName) {
+    equal(lastName, 'Lincoln', 'called');
+    return true;
+  }).pop().lastName, 'Lincoln', 'multiple predicates spaced');
 });
