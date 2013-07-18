@@ -21,7 +21,7 @@
       $ = /^\/(\.\.|\.|(?:!(?![[{])|[^\]![{/`]|`.)*)((!?)([[{]))?(.*)/.exec(rest);
       //$ = /^(\/{1,2})(\.\.|\.|(?:[^![{/`]|`.)*)((?:![|!{|[|{)?)(.*)/.exec(rest);
       if (!$) throw new Error("bad pattern");
-      struct = [ decodeURIComponent($[1].replace(/`%/g, '%25')).replace(/`(.)/, "$1") ]
+      struct = [ decodeURIComponent($[1].replace(/`%/g, '%25')).replace(/`(.)/g, "$1") ]
       rest = $[5];
       // Check for have a predicate or a sub-expression.
       switch ($[4]) {
