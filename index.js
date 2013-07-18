@@ -73,7 +73,7 @@
     }
     return [ function (candidate, vargs) {
       var candidates = [], stack = [ candidate ],
-          star, name, key, i, j, I, predicate, path, object, params;
+          star, name, i, j, I, predicate, path, object, params;
       for (i = 0, I = expression.length; i < I; i++) {
         name = expression[i][0], predicate = expression[i][1];
         while (stack.length) {
@@ -90,10 +90,10 @@
               stack.unshift({ o: object[j], p: [ object ].concat(path) });
             }
           } else if (~(star = name.indexOf('*'))) {
-            for (key in object) {
-              if (key.indexOf(name.substring(0, star)) == 0
-                  && key.lastIndexOf(name.substring(star + 1) == key.length - (name.length - star))) {
-                candidates.push({ o: object[key], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
+            for (j in object) {
+              if (j.indexOf(name.substring(0, star)) == 0
+                  && j.lastIndexOf(name.substring(star + 1) == j.length - (name.length - star))) {
+                candidates.push({ o: object[j], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
                 break;
               }
             }
