@@ -1,140 +1,113 @@
 ! function (definition) {
-  if (typeof module == "object" && module.exports) module.exports = definition();
+  if (typeof window != "undefined") window.inquiry = definition;
   else if (typeof define == "function") define(definition);
-  else window.inquiry = definition();
+  else module.exports = definition();
 } (function () {
-  var slice = [].slice;
-  function die () {
-    console.log.apply(console, slice.call(arguments, 0));
-    process.exit(1);
-  }
-  function say () { console.log.apply(console, slice.call(arguments, 0)) }
-  function error (index) { return "invalid syntax at: " + index }
-  function parse (query, stop) {
-    var i, I, vargs, rest = query, $, index, expression = [], depth = 0, struct, source, args;
-    if (query[0] != '/') {
-      if (/^[[{]/.test(query[0])) {
-        rest = '/.' + query;
-        index = -2;
-      } else {
-        rest = '/' + query;
-        index = -1;
-      }
-    }
+  function parse (rest, nesting, stop) {
+    var expression = [], slash = '/', args, struct, source, i, $;
+    rest = rest.trim()
     while (rest && rest[0] != stop) {
-      // Skip leading whitespaces.
-      $ = /^(\s*)(.*)$/.exec(rest), index += $[1].length;
-      // Match one or two slashes, followed by dots or a property name, plus an
-      // optional predicate or subquery opener.
-      $ = /^(\/{1,2})(\.\.|\.|[\w\*][\*\w\d]*)([{[]?)(.*)/.exec(rest);
-      if (!$) throw new Error(error(0));
-      rest = $[4];
-      struct = $.slice(1, 3);
+      if (rest[0] != '/') {
+        if (/^[![{]/.test(rest[0])) {
+          rest = '/.' + rest;
+        } else {
+          rest = slash + rest;
+        }
+      }
+      slash = '';
+      $ = /^\/((?:!(?![[{])|[^\]![{/`"]|"(?:[^\\"]|\\.)*")*)((!?)([[{]))?(.*)/.exec(rest);
+      if (!$) throw new Error("bad pattern");
+      //struct = [ /^['"]/.test($[1].trim()) ? $[1].trim().replace(/^(['"])(.*)\1$/g, "$2").replace(/\\(.)/g, "$1") : decodeURIComponent($[1].trim()) ]
+      struct = [ /^"/.exec($[1].trim()) ? JSON.parse($[1].trim()) : decodeURIComponent($[1].trim()) ]
+      rest = $[5];
       // Check for have a predicate or a sub-expression.
-      switch ($[3]) {
+      switch ($[4]) {
       // We want to consume the contents of the curly braces that define a
       // predicate to construct a function body.
       case "{":
         // Depth is the number of curly braces we've encountered. We match curly
-        // brances until it is time to pop.
+        // braces until it is time to pop.
         // **TODO**: Test against regular expressions. We are going to have to
         // document the one valid regular expression that we know of that we
         // cannot match: `/[/]/`.
-        depth = 1;
-        source = '';
-        while ($ = /^(?:[^'"{}]*|'(?:[^\\']|\\.)*'|"(?:[^\\"]|\\.)*")*/.exec(rest)) {
-          source += $[0];
-          rest = rest.substring($[0].length);
-          if (rest[0] == '}') {
-            break;
-          }
+        source = $[3] + '(';
+        $ = /^(((?:[^'"}]*|'(?:[^\\']|\\.)*'|"(?:[^\\"]|\\.)*")*)})/.exec(rest);
+        if (!$) throw new Error("bad pattern");
+        source += $[2];
+        rest = rest.substring($[1].length);
+        args = [];
+        for (i = 0; i < nesting; i++) {
+          args.push(Array(i + 2).join('$'), Array(i + 2).join('$') + 'i');
         }
-        rest = rest.substring(1);
-        var params = [];
-        if ($ = /^\(((?:\$(?:i|\d+))(?:\s*,\s*\$(?:i|\d+))*)\)(.*)/.exec(rest)) {
-          rest = $[2];
-          var split = $[1].split(/\s*,\s*/);
-          for (var i = 0; i < split.length; i++) {
-            params.push(split[i].substring(1));
-          }
-        }
-        depth = 0;
-        source.replace(/\$(\d+)/, function ($, number) {
-          depth = Math.min(depth ? depth : 256, number);
-        });
-        args = [ '$', '$i' ];
-        for (i = 0; i < depth; i++) {
+        $ = 0; // evil reuse of `$` to count airty. for the bytes, always for the bytes
+        source.replace(/\$(\d+)/g, function (_, number) { $ = Math.max($, +number) });
+        for (i = 0; i < $; i++) {
           args.push('$' + (i + 1));
         }
-        args.push('return ' + source);
+        args.push('return ' +  source + ')');
         struct.push((function (predicate) {
           return function (candidate, vargs) {
-            return predicate.apply(candidate.object, [ candidate.object, candidate.i ].concat(vargs));
+            return predicate.apply(candidate.o, [ candidate.o, candidate.i ].concat(vargs));
           }
-        })(Function.apply(Function, args)));
-        struct.push(params);
+        })(Function.apply(Function, args)), []);
         break;
       // We want to consume the contents of brackets as a sub-expression, so we
       // call ourselves recursively.
       case "[":
-        $ = parse(rest, "]");
-        struct.push($[0]);
-        struct.push([]);
+        struct.push((function (negate, subquery) {
+          return function (candidate, args) {
+            var length = subquery.call(candidate.o,
+              candidate, [ candidate.o, candidate.i ].concat(args)).length
+            return negate ? ! length : length;
+          }
+        })($[3] == '!', ($ = parse(rest, nesting + 1, "]"))[0]));
         rest = $[1].slice(1);
         break;
       default:
         struct.push(null);
       }
       expression.push(struct);
+      rest = rest.trim()
     }
     return [ function (candidate, vargs) {
       var candidates = [], stack = [ candidate ],
-          star, name, key, i, j, I, predicate, path, object, params;
+          star, nameOrPredicate, i, j, I, path, object;
+      // todo: we might be able to get: div/p/3 (third paragraph)
+      // todo: we might be able to get: .{ $.tag == 'div' }/.{ $.tag == 'p' }/3 (third paragraph)
       for (i = 0, I = expression.length; i < I; i++) {
-        name = expression[i][1], predicate = expression[i][2], params = expression[i][3];
+        nameOrPredicate = expression[i][0];
         while (stack.length) {
-          candidate = stack.shift(), object = candidate.object, path = candidate.path;
-          if (object[name]) {
-            candidates.push({ object: object[name], path: Array.isArray(path[0]) ? path : [ object ].concat(path) });
+          candidate = stack.shift(), object = candidate.o, path = candidate.p;
+          if (nameOrPredicate in object) {
+            candidates.push({ o: object[nameOrPredicate], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
+          } else if (nameOrPredicate == '.') {
+            candidates.push(candidate);
+          } else if (nameOrPredicate == '..') {
+            path = path.slice();
+            candidates.unshift({ o: path.shift(), p: path, i: 0 });
           } else if (Array.isArray(object)) {
             for (j = object.length - 1; j > -1; --j) {
-              stack.unshift({ object: object[j], path: [ object ].concat(path) });
+              stack.unshift({ o: object[j], p: [ object ].concat(path) });
             }
-          } else if (name == '.') {
-            candidates.push(candidate);
-          } else if (name == '..') {
-            var subpath = path.slice();
-            candidates.unshift({ object: subpath.shift(), path: subpath, i: 0 });
-          } else if (~(star = name.indexOf('*'))) {
-            for (key in object) {
-              if (key.indexOf(name.substring(0, star)) == 0
-                  && key.lastIndexOf(name.substring(star + 1) == key.length - (name.length - star))) {
-                candidates.push({ object: object[key], path: Array.isArray(path[0]) ? path : [ object ].concat(path) });
+          } else if (~(star = nameOrPredicate.indexOf('*'))) {
+            for (j in object) {
+              if (j.indexOf(nameOrPredicate.substring(0, star)) == 0
+                  && j.lastIndexOf(nameOrPredicate.substring(star + 1) == j.length - (nameOrPredicate.length - star))) {
+                candidates.push({ o: object[j], p: Array.isArray(path[0]) ? path : [ object ].concat(path) });
                 break;
               }
             }
           }
         }
-        if (predicate) {
+        nameOrPredicate = expression[i][1];
+        if (nameOrPredicate) {
           while (candidates.length) {
-            candidate = candidates.shift(), object = candidate.object;
+            candidate = candidates.shift(), object = candidate.o;
             if (Array.isArray(object)) {
               for (j = object.length - 1; j > -1; --j) {
-                candidates.unshift({ object: object[j], path: [ object ].concat(path), i: j });
+                candidates.unshift({ o: object[j], p: [ object ].concat(path), i: j });
               }
-            } else if (params.length) {
-              var args = [];
-              for (j = 0; j < params.length; j++) {
-                if (params[j] == 'i') {
-                  args.push(candidate.i);
-                } else {
-                  args.push(vargs[params[j]]);
-                }
-              }
-              if (predicate(candidate, args)) {
-                stack.push(candidate);
-              }
-            } else if (predicate(candidate, vargs)) {
+            } else if (nameOrPredicate(candidate, vargs)) {
               stack.push(candidate);
             }
           }
@@ -142,12 +115,12 @@
           stack.unshift.apply(stack, candidates.splice(0));
         }
       }
-      for (i = stack.length - 1; i > -1; i--) stack[i] = stack[i].object;
+      for (j = stack.length - 1; j > -1; --j) stack[j] = stack[j].o;
       return stack;
     }, rest ];
   }
-  return function (query) { 
-    var func = parse(query)[0];
-    return function (object) { return func({ object: object, path: [], i: 0 }, slice.call(arguments, 1)) };
+  return function (query) {
+    var func = parse(query, 1)[0];
+    return function (object) { return func({ o: object, p: [], i: 0 }, [].slice.call(arguments, 1)) };
   }
 });
