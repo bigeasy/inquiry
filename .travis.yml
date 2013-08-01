@@ -10,6 +10,8 @@ before_install:
   - npm install istanbul coveralls
 before_script:
   - "gem install travis-artifacts"
+after_success:
+  - "travis-artifacts upload --path coverage"
 env:
   global:
   - "ARTIFACTS_AWS_REGION=us-east-1"
