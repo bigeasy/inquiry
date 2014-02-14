@@ -4,17 +4,17 @@
   else module.exports = definition();
 } (function () {
   function parse (rest, fixup, nesting, stop) {
-    var expression = [], /*slash = '/',*/ args, struct, source, i, $;
+    var expression = [], slash = '/', args, struct, source, i, $;
     rest = fixup(rest.trim())
     while (rest && rest[0] != stop) {
-      /*if (rest[0] != '/') {*/
+      if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
           rest = '/.' + rest;
-        } /*else {
+        } else {
           rest = slash + rest;
-        }*/
-/*      }
-      slash = ''; */
+        }
+      }
+      slash = '';
       $ = /^\/((?:!(?![[{])|[^\]![{/`"]|"(?:[^\\"]|\\.)*")*)((!?)([[{]))?(.*)/.exec(rest);
       if (!$) throw new Error("bad pattern");
       //struct = [ /^['"]/.test($[1].trim()) ? $[1].trim().replace(/^(['"])(.*)\1$/g, "$2").replace(/\\(.)/g, "$1") : decodeURIComponent($[1].trim()) ]
@@ -77,7 +77,7 @@
       for (i = 0, I = expression.length; i < I; i++) {
         while (stack.length) {
           candidate = stack.shift(), object = candidate.o, path = candidate.p, _ = candidate._;
-          if (object[expression[i][0]] != null) {
+          if (object[expression[i][0]] !== (void(0))) {
             candidates.push({ o: object[expression[i][0]], _: [ expression[i][0] ].concat(_), p: [ object ].concat(path) });
           } else if (expression[i][0] == '.') {
             candidates.push(candidate);
