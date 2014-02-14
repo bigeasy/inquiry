@@ -1,6 +1,7 @@
 ### Issue by Issue
 
  * Get tests to pass again. #67.
+ * Correctly generate inquiry function for browser. #65.
  * Upgrade Proof to 0.0.42. #64.
  * Add repository type to `package.json`. #63.
  * Update `LICENSE` for 2014. #62.
