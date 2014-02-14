@@ -5,7 +5,11 @@
     "homepage":         "http://bigeasy.github.io/inquiry",
     "url":              "http://bigeasy.github.io/inquiry",
     "bugs":             "https://github.com/inquiry/issues",
-    "repository":       "git://github.com/bigeasy/inquiry.git",
+    "repository":
+    {
+                        "type": "git",
+                        "url": "git://github.com/bigeasy/inquiry.git"
+    },
     "author":           "Alan Gutierrez",
     "keywords":
     [
