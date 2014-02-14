@@ -1,5 +1,5 @@
 ! function (definition) {
-  if (typeof window != "undefined") window.inquiry = definition;
+  if (typeof window != "undefined") window.inquiry = definition();
   else if (typeof define == "function") define(definition);
   else module.exports = definition();
 } (function () {
