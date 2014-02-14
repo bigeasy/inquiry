@@ -47,7 +47,7 @@
         args.push('return ' +  source + ')');
         struct.push((function (predicate) {
           return function (candidate, vargs) {
-            return predicate.apply(candidate.o, [ candidate._, candidate.o, candidate.i ].concat(vargs));
+            return predicate.apply(this, [ candidate._, candidate.o, candidate.i ].concat(vargs));
           }
         })(Function.apply(Function, args)), []);
         break;
@@ -56,8 +56,7 @@
       case "[":
         struct.push((function (negate, subquery) {
           return function (candidate, args) {
-            var length = subquery.call(candidate.o,
-              candidate, [ candidate.o, candidate.i ].concat(args)).length
+            var length = subquery.call(this, candidate, [ candidate.o, candidate.i ].concat(args)).length
             return negate ? ! length : length;
           }
         })($[3] == '!', ($ = parse(rest, fixup, nesting + 1, "]"))[0]));
@@ -104,7 +103,7 @@
               for (j = object.length - 1; j > -1; --j) {
                 candidates.unshift({ o: object[j], _: [ j, expression[i][0] ].concat(_), p: [ object ].concat(path), i: j });
               }
-            } else if (expression[i][1](candidate, vargs)) {
+            } else if (expression[i][1].call(this, candidate, vargs)) {
               stack.push(candidate);
             }
           }
@@ -118,6 +117,6 @@
   }
   return function (query, fixup) {
     var func = parse(query, fixup || String, 1)[0];
-    return function (object) { return func({ o: object, _: [], p: [], i: 0 }, [].slice.call(arguments, 1)) };
+    return function (object) { return func.call(this, { o: object, _: [], p: [], i: 0 }, [].slice.call(arguments, 1)) };
   }
 });
