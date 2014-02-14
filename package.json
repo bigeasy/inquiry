@@ -3,7 +3,6 @@
     "description":      "A parameterized JSON path language for Node.js and the browser.",
     "version":          "0.0.2",
     "homepage":         "http://bigeasy.github.io/inquiry",
-    "url":              "http://bigeasy.github.io/inquiry",
     "bugs":             "https://github.com/inquiry/issues",
     "repository":
     {
