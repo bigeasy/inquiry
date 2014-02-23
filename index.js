@@ -70,10 +70,10 @@
     }
     return [ function (candidate, vargs) {
       var candidates = [], stack = [ candidate ],
-          star,  i, j, I, path, object, _;
+          star,  i, j, path, object, _;
       // todo: we might be able to get: div/p/3 (third paragraph)
       // todo: we might be able to get: .{ $.tag == 'div' }/.{ $.tag == 'p' }/3 (third paragraph)
-      for (i = 0, I = expression.length; i < I; i++) {
+      for (i = 0; i < expression.length; i++) {
         while (stack.length) {
           candidate = stack.shift(), object = candidate.o, path = candidate.p, _ = candidate._;
           if (object[expression[i][0]] !== (void(0))) {
