@@ -1,5 +1,6 @@
 ### Issue by Issue
 
+ * Upgrade Proof to 0.0.47. #70.
  * Upgrade Proof to 0.0.44. #69.
  * Get minzipped size back down to 1k. #68.
  * Get tests to pass again. #67.
