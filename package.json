@@ -1,20 +1,20 @@
 {
     "name":             "inquiry",
-    "description":      "A parameterized JSON path language for Node.js and the browser.",
     "version":          "0.0.2",
+    "description":      "A parameterized JSON path language for Node.js and the browser.",
+    "keywords":
+    [
+                        "json", "inquiry", "jsonpath", "xpath", "selectors", "query"
+    ],
     "homepage":         "http://bigeasy.github.io/inquiry",
     "bugs":             "https://github.com/inquiry/issues",
+    "license":          "MIT",
     "repository":
     {
                         "type": "git",
                         "url": "git://github.com/bigeasy/inquiry.git"
     },
-    "author":           "Alan Gutierrez",
-    "keywords":
-    [
-                        "json", "inquiry", "jsonpath", "xpath", "selectors", "query"
-    ],
-    "author":           "Alan Gutierrez <alan@prettyrobots.com> (http://twitter.com/bigeasy)",
+    "author":           "Alan Gutierrez <alan@prettyrobots.com> (https://twitter.com/bigeasy)",
     "contributors":     [],
     "dependencies":     {},
     "devDependencies":
@@ -25,9 +25,5 @@
     "scripts":
     {
                         "test": "proof platform win32 && proof test t/*/*.t.js || t/test"
-    },
-    "licenses": [{
-                        "type": "MIT",
-                        "url": "http://github.com/bigeasy/inquiry/raw/master/LICENSE"
-    }]
+    }
 }
