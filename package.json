@@ -1,29 +1,35 @@
 {
-    "name":             "inquiry",
-    "version":          "0.0.2",
-    "description":      "A parameterized JSON path language for Node.js and the browser.",
+    "name":                 "inquiry",
+    "version":              "0.0.2",
+    "description":
+
+      "A parameterized JSON path language for Node.js and the browser.",
+
     "keywords":
     [
-                        "json", "inquiry", "jsonpath", "xpath", "selectors", "query"
+                            "json", "inquiry", "jsonpath", "xpath", "selectors",
+                            "query"
     ],
-    "homepage":         "http://bigeasy.github.io/inquiry",
-    "bugs":             "https://github.com/inquiry/issues",
-    "license":          "MIT",
+    "author":               "Alan Gutierrez <alan@prettyrobots.com> (https://twitter.com/bigeasy)",
+    "contributors":         [],
+    "homepage":             "http://bigeasy.github.io/inquiry",
+    "bugs":                 "https://github.com/inquiry/issues",
+    "license":              "MIT",
     "repository":
     {
-                        "type": "git",
-                        "url": "git://github.com/bigeasy/inquiry.git"
+                            "type": "git",
+                            "url": "git://github.com/bigeasy/inquiry.git"
     },
-    "author":           "Alan Gutierrez <alan@prettyrobots.com> (https://twitter.com/bigeasy)",
-    "contributors":     [],
-    "dependencies":     {},
+    "dependencies":
+    {
+    },
     "devDependencies":
     {
-                        "proof": "1.2.x",
-                        "uglify-js": "1.3.x"
+                            "proof":                        "1.2.x",
+                            "uglify-js":                    "1.3.x"
     },
     "scripts":
     {
-                        "test": "proof platform win32 && proof test t/*/*.t.js || t/test"
+                            "test": "proof platform win32 && proof test t/*/*.t.js || t/test"
     }
 }
