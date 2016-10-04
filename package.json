@@ -1,6 +1,6 @@
 {
     "name":                 "inquiry",
-    "version":              "0.0.2",
+    "version":              "0.0.3",
     "description":
 
       "A parameterized JSON path language for Node.js and the browser.",
