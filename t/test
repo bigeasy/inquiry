@@ -34,8 +34,8 @@ if [ "$TRAVIS" = "true" ]; then
   node_modules/.bin/istanbul report --format text
   echo ""
 
-  echo "submitting coverage to coveralls.io"
-  cat coverage/lcov.info | node_modules/.bin/coveralls > /dev/null
+#  echo "submitting coverage to coveralls.io"
+#  cat coverage/lcov.info | node_modules/.bin/coveralls > /dev/null
 fi
 
 echo ""
