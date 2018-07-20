@@ -9,8 +9,7 @@ node_js:
 branches:
   only:
   - master
-  - travis-ci
 
 before_install:
-  - npm install
-  - npm install istanbul coveralls
+  - npm install --no-package-lock --no-save
+  - npm install -g istanbul coveralls uglify-js
