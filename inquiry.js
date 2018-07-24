@@ -5,7 +5,7 @@
 } (function () {
   function parse (rest, fixup, nesting, stop) {
     var expression = [], slash = '/', args, struct, source, i, $;
-    rest = fixup(rest.trim())
+    rest = rest.trim()
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
         if (/^[![{]/.test(rest[0])) {
@@ -39,6 +39,7 @@
         for (i = 0; i < nesting; i++) {
           args.push(Array(i + 2).join('$'), Array(i + 2).join('$') + 'i');
         }
+        args.push.apply(args, fixup)
         $ = 0; // evil reuse of `$` to count airty. for the bytes, always for the bytes
         source.replace(/\$(\d+)/g, function (_, number) { $ = Math.max($, +number) });
         for (i = 0; i < $; i++) {
@@ -66,7 +67,7 @@
         struct.push(null);
       }
       expression.push(struct);
-      rest = fixup(rest.trim())
+      rest = rest.trim()
     }
     return [ function (candidate, vargs) {
       var candidates = [], stack = [ candidate ],
@@ -115,8 +116,8 @@
       return stack;
     }, rest ];
   }
-  return function (query, fixup) {
-    var func = parse(query, fixup || String, 1)[0];
+  return function (query, args) {
+    var func = parse(query, args || [], 1)[0];
     return function (object) { return func.call(this, { o: object, _: [], p: [], i: 0 }, [].slice.call(arguments, 1)) };
   }
 });
