@@ -48,7 +48,8 @@
         args.push('return ' +  source + ')');
         struct.push((function (predicate) {
           return function (candidate, vargs) {
-            return predicate.apply(this, [ candidate._, candidate.o, candidate.i ].concat(vargs));
+            return predicate.apply(this, [ candidate._, candidate.o, candidate.i ].concat(vargs))
+                 ? [ candidate ] : []
           }
         })(Function.apply(Function, args)), []);
         break;
@@ -57,8 +58,8 @@
       case "[":
         struct.push((function (negate, subquery) {
           return function (candidate, args) {
-            var length = subquery.call(this, candidate, [ candidate.o, candidate.i ].concat(args)).length
-            return negate ? ! length : length;
+            var length = subquery.call(this, candidate, [ candidate.o, candidate.i ].concat(args)).length;
+            return (negate ? ! length : length) ? [ candidate ] : [];
           }
         })($[3] == '!', ($ = parse(rest, fixup, nesting + 1, "]"))[0]));
         rest = $[1].slice(1);
@@ -104,8 +105,8 @@
               for (j = object.length - 1; j > -1; --j) {
                 candidates.unshift({ o: object[j], _: [ j, expression[i][0] ].concat(_), p: [ object ].concat(path), i: j });
               }
-            } else if (expression[i][1].call(this, candidate, vargs)) {
-              stack.push(candidate);
+            } else {
+              stack.push.apply(stack, expression[i][1].call(this, candidate, vargs))
             }
           }
         } else {
