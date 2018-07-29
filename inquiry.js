@@ -4,18 +4,18 @@
   else module.exports = definition();
 } (function () {
   function parse (rest, fixup, nesting, stop) {
-    var expression = [], slash = '/', args, struct, source, i, $;
+    var expression = [], slash = '/', args, struct, source, i, $, mod;
     rest = rest.trim()
     while (rest && rest[0] != stop) {
       if (rest[0] != '/') {
-        if (/^[![{]/.test(rest[0])) {
+        if (/^[>![{]/.test(rest[0])) {
           rest = '/.' + rest;
         } else {
           rest = slash + rest;
         }
       }
       slash = '';
-      $ = /^\/((?:!(?![[{])|[^\]![{/`"]|"(?:[^\\"]|\\.)*")*)((!?)([[{]))?(.*)/.exec(rest);
+      $ = /^\/((?:!(?![[{])|[^>![{/`"\]]|"(?:[^\\"]|\\.)*")*)(([>!]?)([[{]))?(.*)/.exec(rest);
       if (!$) throw new Error("bad pattern");
       //struct = [ /^['"]/.test($[1].trim()) ? $[1].trim().replace(/^(['"])(.*)\1$/g, "$2").replace(/\\(.)/g, "$1") : decodeURIComponent($[1].trim()) ]
       struct = [ /^"/.exec($[1].trim()) ? JSON.parse($[1].trim()) : decodeURIComponent($[1].trim()) ]
@@ -30,6 +30,10 @@
         // **TODO**: Test against regular expressions. We are going to have to
         // document the one valid regular expression that we know of that we
         // cannot match: `/[/]/`.
+        mod = $[3]
+        if (mod == '>') {
+            $[3] = ''
+        }
         source = $[3] + '(';
         $ = /^(((?:[^'"}]*|'(?:[^\\']|\\.)*'|"(?:[^\\"]|\\.)*")*)})/.exec(rest);
         if (!$) throw new Error("bad pattern");
@@ -46,12 +50,29 @@
           args.push('$' + (i + 1));
         }
         args.push('return ' +  source + ')');
-        struct.push((function (predicate) {
-          return function (candidate, vargs) {
-            return predicate.apply(this, [ candidate._, candidate.o, candidate.i ].concat(vargs))
-                 ? [ candidate ] : []
-          }
-        })(Function.apply(Function, args)), []);
+        if (mod == '>') {
+            struct.push((function (predicate) {
+              return function (candidate, vargs) {
+                var result = predicate.apply(this, [ candidate._, candidate.o, candidate.i ].concat(vargs))
+                if (result === (void(0))) {
+                    return []
+                }
+                if (!Array.isArray(result)) {
+                    result = [ result ]
+                }
+                return result.map(function (result, index) {
+                    return { _: candidate._, o: result, i: index }
+                })
+              }
+            })(Function.apply(Function, args)), []);
+        } else {
+            struct.push((function (predicate) {
+              return function (candidate, vargs) {
+                return predicate.apply(this, [ candidate._, candidate.o, candidate.i ].concat(vargs))
+                     ? [ candidate ] : []
+              }
+            })(Function.apply(Function, args)), []);
+        }
         break;
       // We want to consume the contents of brackets as a sub-expression, so we
       // call ourselves recursively.
