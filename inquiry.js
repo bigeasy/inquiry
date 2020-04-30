@@ -140,6 +140,6 @@
   }
   return function (query, args) {
     var func = parse(query, args || [], 1)[0];
-    return function (object) { return func.call(this, { o: object, _: [], p: [], i: 0 }, [].slice.call(arguments, 1)) };
+    return function (object) { return func.call(this, { o: object, _: [], p: [] }, [].slice.call(arguments, 1)) };
   }
 });
