@@ -25,11 +25,11 @@
     },
     "devDependencies":
     {
-                            "proof":                        "3.0.x"
+                            "proof":                        "8.0.0-alpha.9"
     },
     "main":                 "inquiry",
     "scripts":
     {
-                            "test": "proof platform win32 && proof test t/*/*.t.js || t/test"
+                            "test": "proof t/*/*.t.js"
     }
 }
