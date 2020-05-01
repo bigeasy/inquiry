@@ -14,8 +14,15 @@
           rest = slash + rest;
         }
       }
+      // todo: can you fold this into the regex somehow?
+      var descend = false
+      if (rest[1] == '/') {
+        descend = true
+        rest = rest.substring(1)
+      }
       slash = '';
       $ = /^\/((?:!(?![[{])|[^>![{/`"\]]|"(?:[^\\"]|\\.)*")*)(([>!]?)([[{]))?(.*)/.exec(rest);
+      console.log($)
       if (!$) throw new Error("bad pattern");
       //struct = [ /^['"]/.test($[1].trim()) ? $[1].trim().replace(/^(['"])(.*)\1$/g, "$2").replace(/\\(.)/g, "$1") : decodeURIComponent($[1].trim()) ]
       struct = [ /^"/.exec($[1].trim()) ? JSON.parse($[1].trim()) : decodeURIComponent($[1].trim()) ]
@@ -64,14 +71,14 @@
                     return { _: candidate._, o: result, i: index }
                 })
               }
-            })(Function.apply(Function, args)), []);
+            })(Function.apply(Function, args)));
         } else {
             struct.push((function (predicate) {
               return function (candidate, vargs) {
                 return predicate.apply(this, [ candidate._, candidate.o, candidate.i ].concat(vargs))
                      ? [ candidate ] : []
               }
-            })(Function.apply(Function, args)), []);
+            })(Function.apply(Function, args)));
         }
         break;
       // We want to consume the contents of brackets as a sub-expression, so we
@@ -88,6 +95,7 @@
       default:
         struct.push(null);
       }
+      struct.push(descend);
       expression.push(struct);
       rest = rest.trim()
     }
@@ -96,9 +104,20 @@
           star,  i, j, path, object, _;
       // todo: we might be able to get: div/p/3 (third paragraph)
       // todo: we might be able to get: .{ $.tag == 'div' }/.{ $.tag == 'p' }/3 (third paragraph)
+      // todo: appears as though .o is just .p[0] so why both?
+      // todo: _ appears to track the path, appears in correct for arrays, and
+      // appears unused, not returned to the user.
       for (i = 0; i < expression.length; i++) {
         while (stack.length) {
           candidate = stack.shift(), object = candidate.o, path = candidate.p, _ = candidate._;
+          console.log(expression[i])
+          if (expression[i][2] && !Array.isArray(object)) {
+            console.log('here')
+            for (var key in object) {
+                console.log(object, key)
+              stack.unshift({ o: object[key], _: [ key ].concat(_), p: [ object[key] ].concat(path) });
+            }
+          }
           if (object[expression[i][0]] !== (void(0))) {
             candidates.push({ o: object[expression[i][0]], _: [ expression[i][0] ].concat(_), p: [ object ].concat(path) });
           } else if (expression[i][0] == '.') {
@@ -134,6 +153,11 @@
           stack.unshift.apply(stack, candidates.splice(0));
         }
       }
+      // todo: I wonder if simply reversing this stack gives us descents in
+      // document order. if so, we sould go through the array in order and
+      // reverse the array here, or document reverse document order.
+      // todo: benchmark against simple recursion.
+      // todo: how to return the path.
       for (j = stack.length - 1; j > -1; --j) stack[j] = stack[j].o;
       return stack;
     }, rest ];
