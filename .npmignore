@@ -1,6 +1,5 @@
 /.*
 /*.md
-/benchmark
 /coverage
 /docs
-/t
+/test
