@@ -22,7 +22,6 @@
       }
       slash = '';
       $ = /^\/((?:!(?![[{])|[^>![{/`"\]]|"(?:[^\\"]|\\.)*")*)(([>!]?)([[{]))?(.*)/.exec(rest);
-      console.log($)
       if (!$) throw new Error("bad pattern");
       //struct = [ /^['"]/.test($[1].trim()) ? $[1].trim().replace(/^(['"])(.*)\1$/g, "$2").replace(/\\(.)/g, "$1") : decodeURIComponent($[1].trim()) ]
       struct = [ /^"/.exec($[1].trim()) ? JSON.parse($[1].trim()) : decodeURIComponent($[1].trim()) ]
@@ -110,11 +109,8 @@
       for (i = 0; i < expression.length; i++) {
         while (stack.length) {
           candidate = stack.shift(), object = candidate.o, path = candidate.p, _ = candidate._;
-          console.log(expression[i])
           if (expression[i][2] && !Array.isArray(object)) {
-            console.log('here')
             for (var key in object) {
-                console.log(object, key)
               stack.unshift({ o: object[key], _: [ key ].concat(_), p: [ object[key] ].concat(path) });
             }
           }
