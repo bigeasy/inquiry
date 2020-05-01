@@ -30,6 +30,6 @@
     "main":                 "inquiry",
     "scripts":
     {
-                            "test": "proof test/*/*.t.js"
+                            "test": "proof test/*.t.js"
     }
 }

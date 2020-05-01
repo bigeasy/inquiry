@@ -1,8 +1,5 @@
-#!/usr/bin/env node
-
-var inquiry = require("../..");
-
 require("proof")(1, function (assert) {
+  var inquiry = require("..");
   var object = { name: "Alan", zero: 0, "null": null };
   var object = {
     items: {

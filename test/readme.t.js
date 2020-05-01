@@ -1,7 +1,5 @@
-#!/usr/bin/env node
-
 require("proof")(34, function (assert) {
-  var $q = require("../.."), object = require('./presidents'), result;
+  var $q = require(".."), object = require('./presidents'), result;
 
   var hickory = $q('/p*{$.lastName == $1}')(object, "Jackson").pop();
   assert(hickory.lastName, 'Jackson', 'old hickory');

@@ -1,7 +1,5 @@
-#!/usr/bin/env node
-
-var inquiry = require("../..");
 require("proof")(5, function (equal) {
+  var inquiry = require("..");
   var object = require('./presidents'), result;
   result = inquiry("/presidents/../presidents/15")(object);
   equal(result.length, 1, 'array parent count');

@@ -1,7 +1,5 @@
-#!/usr/bin/env node
-
 require("proof")(2, function (equal) {
-  var inquiry = require("../..");
+  var inquiry = require("..");
   try {
     inquiry(']');
   } catch (e) {
